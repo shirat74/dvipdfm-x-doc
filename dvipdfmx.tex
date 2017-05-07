@@ -67,6 +67,7 @@
     belowskip=2em
 }
 \usepackage{mflogo}
+\usepackage{lipsum}
 \usepackage{array}
 \usepackage{marginnote}
 \renewcommand*{\marginfont}{\footnotesize\itshape}
@@ -742,7 +743,7 @@ sets the \dvipdfmx's compatibility flag.
 \subsection{DVI Special Examples}
 
 The following code reads \TeX\ source file and creates a stream object named
-as \code{@SourceFile}, then creates a file attachment annotation.
+as \code{SourceFile}, then creates a file attachment annotation.
 \marginnote{%
 \special{pdf:fstream @SourceFile (\jobname.tex)}%
 \special{pdf:ann width 10bp height 20bp
@@ -778,7 +779,15 @@ as \code{@SourceFile}, then creates a file attachment annotation.
    >>
 }
 \end{lstlisting}
-An example of separation color space:
+Viewer support is required for annotation to be viewed correctly.
+A push-pin image must be shown in the margin if viewer supports this kind of
+annotation.
+PDF viewer applications are required to provide predefined icon appearances
+at least for the following standard icons: \code{Graph}, \code{PushPin},
+\code{PaperClip}, and \code{Tag}.
+
+%%EXAMPLE: Separation Color Space
+Various color spaces can be used. For examples, Separation color space:
 \special{pdf:stream @TintTransform1
   ({0 exch dup 0.62 mul exch 0})
   <<  /FunctionType 4
@@ -849,49 +858,98 @@ An example of separation color space:
   \special{pdf:code Q}
 }
 \end{lstlisting}
-Transparency example:
+
+\code{TintTransform}s defined here are functions for transforming \textit{tint}
+values into approximate colors in the \textit{alternate color space}
+(\code{DeviceCMYK} in this example). PostScript calculator functions are used
+for converting a single component value representing ``Orange'' or ``Green''
+into a four component CMYK value to approximate those colors.
+
+The \code{cs} operator for selecting color space and the \code{scn} operator
+for color values are used. Be sure that \code{pdf:put} command, which puts
+\code{ColorSpace} resources into the current page's resource dictionary,
+goes into the same page as subsequent drawing commands.
+
+\dvipdfmx\ currently does not have an easy interface for using various color
+space families such as CIE-Based color space (e.g., calibrated colors and
+color space with an ICC profile) and special color space (e.g., indexed, spot
+color, and shading and patterns).
+
+%%EXAMPLE: Shading
+%\begin{center}
+%\makebox[300bp][l]{%
+%  \special{pdf:put @resources <<
+%    /ColorSpace << /CS03 @Orange >>
+%    /Shading <<
+%      /SH01 <<
+%        /ShadingType 2
+%        /ColorSpace @Orange
+%        /Coords     [0 0 400 100]
+%        /Extend     [true true]
+%        /Function   << /FunctionType 2 /Domain [0 1] /N 1.0 >>
+%      >>
+%    >>
+%  >>}
+%\special{pdf:content q 0 0 300 10 re W n /SH01 sh Q}%
+%}
+%\end{center}
+
+%%EXAMPLE: Transparency
+\XeTeX's transparency feature is currently lost in \xdvipdfmx, but the same
+effect can be achieved by setting graphics state with \code{ExtGState} and
+\code{gs} operator. Here is a simple transparency example:
 \special{pdf:obj @gs01 <<
-  /Type /ExtGState /CA 0.6 /ca 0.6 /AIS false
+  /Type /ExtGState /CA 0.5 /ca 0.5 /AIS false
 >>}%
 \begin{center}
 \mbox{%
+  %\raisebox{120pt}{\parbox[t]{0.8\textwidth}{%
+  %  \addfontfeature{Color=444444}\lipsum[1]}%
+  %}%
+  %\hspace{-0.8\textwidth}%
   \special{pdf:put @resources <<
     /ExtGState << /GS01 @gs01 >>
   >>}%
   \fontsize{200pt}{200pt}\selectfont
-  \special{pdf:code q 1.0 0.8 0.2 rg}
-  \textalpha%
-  \special{pdf:code /GS01 gs 0.4 0.8 0.4 rg}%
-  \hspace{-0.3em}\textbeta%
+  \special{pdf:code q /GS01 gs 1.0 0.8 0.2 rg}%
+  α%
+  \special{pdf:code 0.4 0.8 0.4 rg}%
+  \hspace{-0.3em}β%
   \hspace{-0.3em}\raisebox{0.5ex}{%
     \special{pdf:code 0.4 0.4 0.8 rg}%
-    \textpi%
-  }
+    π%
+  }%
+  \special{pdf:code 0.6 0.2 0.8 rg}%
+  \hspace{-0.2em}%
+  γ%
   \special{pdf:code Q}%
 }
 \end{center}
 \begin{lstlisting}
 \special{pdf:obj @GS01 <<
-  /Type /ExtGState /CA 0.6 /ca 0.6 /AIS false
+  /Type /ExtGState /CA 0.5 /ca 0.5 /AIS false
 >>}%
 \mbox{%
   \special{pdf:put @resources <<
     /ExtGState << /GS01 @GS01 >>
   >>}%
-  \special{pdf:code q 1.0 0.8 0.2 rg}%
-  \textalpha%
-  \special{pdf:code /GS01 gs 0.4 0.8 0.4 rg}%
-  \hspace{-0.3em}\textbeta%
+  \special{pdf:code q /GS01 gs 1.0 0.8 0.2 rg}%
+  α%
+  \special{pdf:code 0.4 0.8 0.4 rg}%
+  \hspace{-0.3em}β%
   \hspace{-0.3em}\raisebox{0.5ex}{%
     \special{pdf:code 0.4 0.4 0.8 rg}%
-    \textpi%
+    π%
   }%
+  \special{pdf:code 1.0 0.2 0.4 rg}%
+  \hspace{-0.2em}%
+  γ%
   \special{pdf:code Q}%
 }
 \end{lstlisting}
 where \code{CA} and \code{ca} represent opacity of stroke and fill color
-individually.
-
+individually. Again, \code{pdf:put} command must go into the same page as
+subsequent grahics and text drawing operators.
 \section{Font Mapping}
 
 Syntax of fontmap file is basically the same as \dvipdfm. There are few
