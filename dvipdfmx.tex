@@ -16,20 +16,20 @@
 \newcommand{\jpninezeroexamples}{{%
 \setmainfont[Scale=5,RawFeature=+jp90]{SourceHanSerifJP-Light.otf}葛祇逢}}
 %% We use PostScript raw code here to test dvipdfmx's capability.
-%% TFM files `rml' and `rmlv' are distributed with ASCII pTeX.
+%% TFM files `uprml' and `uprmlv' are distributed with upTeX.
 %% TrueType font `yumindb.ttf' is bundled with Windows 10.
 \newcommand{\jphoritext}{%
 \makebox[112bp][l]{%
 \raisebox{88bp}[112bp][0bp]{%
-\special{pdf:mapline rml UniJIS-UTF8-H yumindb.ttf}
-\special{ps: rml findfont 16 scalefont setfont
+\special{pdf:mapline uprml UniJIS-UTF8-H yumindb.ttf}
+\special{ps: uprml findfont 16 scalefont setfont
   currentpoint moveto (「こんにちは」) show}%
 }}}
 \newcommand{\jpverttext}{%
 \makebox[16bp][l]{%
 \raisebox{112bp}[112bp][0bp]{%
-\special{pdf:mapline rmlv UniJIS-UTF8-V yumindb.ttf}
-\special{ps: rmlv findfont 16 scalefont setfont
+\special{pdf:mapline uprmlv UniJIS-UTF8-V yumindb.ttf}
+\special{ps: uprmlv findfont 16 scalefont setfont
   currentpoint moveto (「こんにちは」) show}%
 }}}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -84,7 +84,7 @@
 \title{The \dvipdfmx\ User's Manual}
 \author{The \dvipdfmx\ project team\footnote{Jin-Hwan Cho, Matthias Franz,
 and \href{mailto:shunsaku.hirata74@gmail.com}{Shunsaku Hirata}}}
-\date{May 6, 2017}
+\date{May 7, 2017}
 \begin{document}
 
 \maketitle
@@ -92,9 +92,8 @@ and \href{mailto:shunsaku.hirata74@gmail.com}{Shunsaku Hirata}}}
 
 \section{Introduction}
 
-The \dvipdfmx\ (formerly \dvipdfm-cjk) project
-provides an extended version of the \dvipdfm, a DVI to PDF translator developed
-by Mark~A.~Wicks.
+The \dvipdfmx\ (formerly \dvipdfm-cjk) project provides an extended version of
+the \dvipdfm, a DVI to PDF translator developed by Mark~A.~Wicks.
 
 The primary goal of this project is to support multi-byte character encodings
 and large character sets such as for East Asian languages.
@@ -131,16 +130,16 @@ Some important features are still missing:
 
 \dvipdfmx\ is now maintained as part of \TeX\ Live. Latest source code can
 be found at \TeX\ Live SVN repository. For an instruction on accessing the
-development sources for TeX Live, see,\medskip
+development sources for \TeX\ Live, see,\medskip
 
 \url{http://www.tug.org/texlive/svn/}
 \medskip
 
-This manual, ``The \dvipdfmx\ User's Manual'', is originally prepared for
-\TeX\ Live 2017. Current maintainer of this manual is Shunsaku Hirata.
+This document, ``The \dvipdfmx\ User's Manual'', was originally prepared for
+\TeX\ Live 2017. Current maintainer of this document is Shunsaku Hirata.
 Latest version and contact information can be found at:\medskip
 
-\url{http://github.com/shirat74/dvipdfm-x-doc/}
+\url{http://github.com/shirat74/dvipdfm-x-doc}
 \medskip
 
 \noindent{}Please send quenstions or suggestions.
@@ -307,7 +306,7 @@ Here, input encodig is assumed to be UTF-8.
 
 \subsection{CJK-\LaTeX}
 
-CJK-\LaTeX users are required to have Subfont Definition Files to be installed.
+CJK-\LaTeX\ users are required to have Subfont Definition Files to be installed.
 They are available as part of the \package{ttfutils} package.
 
 To use TrueType Ariphic fonts provided by the \package{arphic-ttf} package:
@@ -401,7 +400,7 @@ The content of those files are the same as CMap Resources.
 They are required when using TrueType fonts emulated as CID-keyed fonts.
 They should be found in the same directory as ordinary CMap files.
 
-ToUnicode Mapping files are included in \package{adobemapping} package.
+ToUnicode Mapping files are included in the \package{adobemapping} package.
 Those files are not required for \XeTeX\ users.
 
 \section{Overview of Extensions}
@@ -453,7 +452,7 @@ TFM formats.
 
 In PDF,it is often the case that text is not encoded in Unicode.
 However, modern applications usually want them represented in Unicode to make
-it usable. ToUnicode CMaps are a bridge between PDF text string encodings
+it usable. ToUnicode CMap is a bridge between PDF text string encodings
 and Unicode encodings, and they makes it possible to extract text in PDF as
 Unicode encoded strings. It is important to make resulting PDF search-able and
 copy-and-past-able. Dvipdfmx supports the auto-creation of ToUnicode CMaps.
@@ -471,7 +470,7 @@ by PDF viewers.
 
 There are various other improvements over \dvipdfm. The most notable one is
 more improved PDF input and output support: The cross-reference stream and
-object stream introduced in PDF-1.5 are also supported.
+object stream introduced in \lnum{PDF-1.5} are also supported.
 
 
 \section{Graphics and Image Format}\label{SEC:graphics}
@@ -706,7 +705,7 @@ and \code{Q} (save-restore of graphics state) pair.
 A typical usage of this special is:
 \begin{lstlisting}
 \special{pdf:code q 1 Tr}
-text goes here...
+...some text goes here...
 \special{pdf:code Q}
 \end{lstlisting}
 which changes text rendering mode to 1, as shown in Figure~\ref{FIG:trmode} for
@@ -729,7 +728,7 @@ always guaranteed to work as `expected'.
 \subsection{Dvipdfmx Extensions}
 
 A new special \code{dvipdfmx:config} was introduced in \TeX Live 2016 which
-makes it possible to invoke a command line option. Most single letter command
+makes it possible to invoke a command line option. Several single letter command
 line options except \option{D} are supported. For examples,
 \begin{lstlisting}
 dvipdfmx:config C 0x10
@@ -900,10 +899,10 @@ This section is completely irrevant to \XeTeX\ users.
 
 \subsection{Extended Syntax and Options}
 
-Few options are available in \dvipdfmx\ in addition to the original
-dvipdfm's one. All options that makes \dvipdfmx\ to use unembedded
-fonts are deprecated as by using them makes \dvipdfmx\ to create PDF
-files which can be not compliant to the ISO standards.
+Few options are available in \dvipdfmx\ in addition to the original dvipdfm's
+one. All options and features that makes \dvipdfmx\ to use unembedded fonts
+are deprecated, as by using them makes \dvipdfmx\ to create PDF files which can
+be non-compliant to the ISO standards.
 
 \subsubsection{SFD Specification}
 
@@ -912,12 +911,10 @@ a single font, dvipdfmx supports an extended sytax of the form
 \begin{lstlisting}
 tfm_name@SFD@  encoding  filename  options
 \end{lstlisting}
-
 A typical example looks like:
 \begin{lstlisting}
 gbsn@EUC@  GB-EUC-H  gbsn00lp
 \end{lstlisting}
-
 where TFMs \code{gbsn00}, \code{gbsn01}, \code{gbsn02}... are mapped into a
 single font named \code{gbsn00lp} via the rule described in the SFD file
 \code{EUC}.
@@ -929,7 +926,6 @@ in front of TrueType font name:
 \begin{lstlisting}
 min10  H  :1:mincho
 \end{lstlisting}
-
 In this example, the option \code{:1:} tells \dvipdfmx\ to select first
 TrueType font from the TTC font \code{mincho.ttc}. Alternatively, the
 \option{-i} option can be used in the option field to specify TTC index:
@@ -940,7 +936,7 @@ min10  H  mincho  -i 1
 \subsubsection{Non-embedding Switch}
 
 \deprecated{Use of this option is deprecated.}
-\noindent{}The character \code{!} in front of the font name can be used to
+\noindent{}The character \option{!} in front of the font name can be used to
 indicate that the font shall not be embedded. This feature greatly reduces the
 size of the final PDF output, but the PDF file may not be viewed exactly in
 other systems on which appropriate fonts are not installed.
@@ -1015,7 +1011,7 @@ supported for those fonts.
 used to create synthetic bold, italic, and bolditalic style variants from other
 font using PDF viewer's (or OS's) function.
 \begin{lstlisting}
-jbtmo@UKS@      UniKSCms-UCS2-H :0:!batang,Italic
+jbtmo@UKS@  UniKSCms-UCS2-H  :0:!batang,Italic
 \end{lstlisting}
 
 Availability of this feature highly depends on the implementation of PDF
@@ -1040,9 +1036,9 @@ With the \option{-w} option, writing mode can be specified.
 enables an OpentType Layout Feature related to vertical writing, namely,
 \code{vert} or \code{vrt2}, to choose proper glyphs for vertical text.
 
-The \option{-l} option can be used to enable various OpenType Layout GSUB
-Features. For examples, \option{-l jp04}
-enables \code{jp04} feature to select \lnum{JIS2004} forms for Kanjis.
+The \option{-l} (lower case el) option can be used to enable various
+OpenType Layout GSUB Features. For examples, \option{-l jp04} enables
+\code{jp04} feature to select \lnum{JIS2004} forms for Kanjis.
 Features can be specified as a ``:'' separated list of OpenType Layout
 Feature tags like \option{-l vkna:jp04}.
 Script and language may be additionally specified as
@@ -1072,7 +1068,7 @@ general many-to-many glyph substitutions does not take effect.
 public-key security handlers are currently not supported.
 Encryption is enabled by \option{-S} command line option.
 
-When encrypting the document, up to two passwords can be specified:
+When encrypting the document, up to two passwords can be specified --
 an owner password and a user password. If a user attempts to open an encrypted
 document that has a user password, PDF applications prompt for a password.
 Correctly supplying either password enables the user to open the document to
@@ -1080,14 +1076,14 @@ display or to access to the contents.
 Depending on which password (user or owner) was supplied, additional operations
 allowed for an opened document is determined; full access for users who opened
 the document with the correct owner password or additional operations
-controlled by permission flags supplied by the owner of the document for users
-who opened the document with the correct user password.
+controlled by permission flags for users who opened the document with the
+correct user password.
 
 Access permision flags can be specified via the \option{-P} option. Each bits
-of the (unsigned) integer number given to this option represents user access
-permissions;
-e.g., bit position 3 for allowing ``print'', 4 for ``modify the contents'',
-5 for ``copy or extract text'', and so on.
+of the (32-bit unsigned) integer number given to this option represents user
+access permissions; e.g., bit position 3 for allowing ``print'', 4 for
+``modify'', 5 for ``copy or extract'', and so on. See,
+Table~\ref{TABLE:flags}.
 \begin{table}[b]
     \centering
     \begin{tabular}{lp{8.3cm}}\hline
@@ -1101,7 +1097,7 @@ e.g., bit position 3 for allowing ``print'', 4 for ``modify the contents'',
         \hline
     \end{tabular}
     \caption{Flag bits and their short explaination for the Revision 2
-     Standard Security Handler.}
+     Standard Security Handler.}\label{TABLE:flags}
 \end{table}
 For examples,
 \begin{lstlisting}
@@ -1113,13 +1109,16 @@ modification of the contents of the document).
 
 The \option{-K} option can be used to specify the encryption key length.
 The key length must be multiple of 8 in the range 40 to 128, or 256 (for PDF
-version 1.7 plus Adobe Extension or forthcoming PDF version 2.0).
+version 1.7 plus Adobe Extension or forthcoming PDF version 2.0). Please note
+that key length 256 requires Adobe's Extension to \lnum{PDF-1.7} and hence PDF
+applications may not support it.
 
 Password will be asked when encryption is enabled. It may not work well on
 Windows platforms. Use the \code{pdf:encrypt} special instead of command line
 options in this case.
 
-The default values for \option{K} is 40 and for \option{-P} is \code{0x003C0}.
+The default values for \option{K} is 40 and for \option{-P} is \code{0x003C0}
+(all bits from bit-position 3 to 6 set).
 
 \section{Other Improvements}
 
@@ -1144,6 +1143,43 @@ U+0068 in this example) via the AGL mapping; then, OpenType cmap table is used
 to further converting resulting Unicode sequence to a sequence of glyph indices;
 finally, OpenType Layout Feature \code{liga} is applied to get desired glyph.
 
+Glyph name of the form \code{a.swsh2} can be specified to denote 2nd swash
+variant form of letter `a'.
+
+\subsection{CFF Conversion}
+
+\dvipdfmx\ supports on-the-fly Type1 to CFF (Type1C) conversion which greatly
+reduces size of resulting PDF files when using PostScript Type1 fonts.
+Conversion is essentially `lossless' and there should not be any quality loss.
+However, due to the difference on the ability of rasterizers, there might be
+slight difference on the rendering result.
+
+When using (older) Type1 fonts, \dvipdfmx\ may give the following warning:
+\begin{lstlisting}
+Obsolete four arguments of "endchar" will be used for Type1 "seac" operator.
+\end{lstlisting}
+This happens when an accented character is a composite glyph.
+Adobe made the use of \code{endchar} operator for composite glyphs deprecated.
+However, as mentioned in ``Appendix C Compatibility and Deprecated Operators''
+of Adobe Technical Note \#5177,
+``\href{http://wwwimages.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5177.Type2.pdf}{Type 2 Charstring Format}'',
+PDF applications are supposed to support this operator. Hence, this warning
+message can be ignored.
+
+Use of Type1 font should be avoided. Please consider using OpenType version
+of font whenever possible.
+
+\subsection{Text Handling in PostScript Special}
+
+Text handling in PostScript special is extended to support CJK text.
+The following code draws Japanese text as shown in Figure~\ref{FIG:verttext}:
+\begin{lstlisting}
+\special{pdf:mapline uprml UniJIS-UTF8-H yumindb.ttf}
+\special{ps: uprml findfont 16 scalefont setfont
+  currentpoint moveto
+  (...some Japanese text goes here...) show
+}
+\end{lstlisting}
 
 \section{Incompatible Changes}\label{SEC:compatibility}
 
