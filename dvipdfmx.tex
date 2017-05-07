@@ -67,16 +67,18 @@
     belowskip=2em
 }
 \usepackage{mflogo}
+\usepackage{array}
 \usepackage{marginnote}
 \renewcommand*{\marginfont}{\footnotesize\itshape}
 \usepackage[noorphans,font=itshape]{quoting}
 \newcommand{\package}[1]{{\itshape #1}}
-\newcommand{\code}[1]{\texttt{#1}}
-\newcommand{\option}[1]{`\texttt{#1}'}
+\newcommand{\code}[1]{\mbox{\texttt{#1}}}
+\newcommand{\option}[1]{\mbox{`\texttt{#1}'}}
 \newcommand{\dvipdfm}{\texttt{dvipdfm}}
 \newcommand{\dvipdfmx}{\texttt{dvipdfmx}}
 \newcommand{\xdvipdfmx}{\texttt{xdvipdfmx}}
 \newcommand{\deprecated}[1]{\marginnote{\addfontfeatures{Color=CC3333}#1}}
+\newcommand{\newfeature}[1]{\marginnote{\addfontfeatures{Color=3366CC}#1}}
 \newcommand{\lnum}[1]{{\addfontfeatures{RawFeature=+lnum}#1}}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -534,7 +536,7 @@ an experimental stage. J2C format and transparency are not supported.
 
 \subsection{Image Cache}
 
-Chaching of images generated via filtering command specified with \option{-D}
+Caching of images generated via filtering command specified with \option{-D}
 option is supported. It solves the problems that image inclusion becomes very
 slow when external filtering program such as GhostScript is invoked each time
 images are included.
@@ -727,6 +729,8 @@ always guaranteed to work as `expected'.
 
 \subsection{Dvipdfmx Extensions}
 
+\newfeature{Addition in \TeX\ Live 2016}
+
 A new special \code{dvipdfmx:config} was introduced in \TeX Live 2016 which
 makes it possible to invoke a command line option. Several single letter command
 line options except \option{D} are supported. For examples,
@@ -774,7 +778,7 @@ as \code{@SourceFile}, then creates a file attachment annotation.
    >>
 }
 \end{lstlisting}
-An Example of separation color space:
+An example of separation color space:
 \special{pdf:stream @TintTransform1
   ({0 exch dup 0.62 mul exch 0})
   <<  /FunctionType 4
@@ -1036,12 +1040,14 @@ With the \option{-w} option, writing mode can be specified.
 enables an OpentType Layout Feature related to vertical writing, namely,
 \code{vert} or \code{vrt2}, to choose proper glyphs for vertical text.
 
+\newfeature{Addition in \TeX\ Live 2017.}
+
 The \option{-l} (lower case el) option can be used to enable various
 OpenType Layout GSUB Features. For examples, \option{-l jp04} enables
 \code{jp04} feature to select \lnum{JIS2004} forms for Kanjis.
 Features can be specified as a ``:'' separated list of OpenType Layout
-Feature tags like \option{-l vkna:jp04}.
-Script and language may be additionally specified as
+Feature tags like \option{-l vkna:jp04}. Script and language may be
+additionally specified as
 \option{-l kana.JAN.ruby}.
 
 An example can be
@@ -1123,6 +1129,11 @@ The default values for \option{K} is 40 and for \option{-P} is \code{0x003C0}
 \section{Other Improvements}
 
 This section briefly describes other improvements made for \dvipdfmx.
+There is an extension to glyph name handling in \code{enc} files for
+seamless support of both PostScript Type1 and TrueType fonts.
+PostScript Type1 font support is enhanced although this format might be
+considered obsolete. There are several changes in PostScript special support.
+Support for PostScript special is somewhat buggy and fragile.
 
 \subsection{Extended Glyph Name Syntax}
 
@@ -1148,31 +1159,37 @@ variant form of letter `a'.
 
 \subsection{CFF Conversion}
 
-\dvipdfmx\ supports on-the-fly Type1 to CFF (Type1C) conversion which greatly
-reduces size of resulting PDF files when using PostScript Type1 fonts.
+\dvipdfmx\ supports on-the-fly PostScript Type1 to CFF (Type1C) conversion
+which greatly reduces size of resulting PDF files when using Type1 fonts.
 Conversion is essentially `lossless' and there should not be any quality loss.
-However, due to the difference on the ability of rasterizers, there might be
-slight difference on the rendering result.
+However, due to differences in the ability of rasterizers, there might be
+noticeable differences on the rendering result.
 
 When using (older) Type1 fonts, \dvipdfmx\ may give the following warning:
 \begin{lstlisting}
-Obsolete four arguments of "endchar" will be used for Type1 "seac" operator.
+Obsolete four arguments of "endchar" will be used for Type1
+"seac" operator.
 \end{lstlisting}
-This happens when an accented character is a composite glyph.
-Adobe made the use of \code{endchar} operator for composite glyphs deprecated.
-However, as mentioned in ``Appendix C Compatibility and Deprecated Operators''
-of Adobe Technical Note \#5177,
+This happens when there is an accented character made from composite glyphs.
+This warning message is given as Adobe made the use of \code{endchar} operator
+for composite glyphs deprecated.
+
+However, as mentioned in
+``Appendix C Compatibility and Deprecated Operators'' of Adobe Technical
+Note \#5177,
 ``\href{http://wwwimages.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5177.Type2.pdf}{Type 2 Charstring Format}'',
 PDF applications are supposed to support this operator. Hence, this warning
-message can be ignored.
+message can be ignored. Please note that deprecated use of \code{endchar}
+operator for compositing glyphs is not allowed in ordinary OpenType fonts.
+So, \dvipdfmx\ stops with an error if such font is encountered.
 
-Use of Type1 font should be avoided. Please consider using OpenType version
-of font whenever possible.
+Use of Type1 font should be avoided as much as possible.
+Please consider using OpenType version of font whenever possible.
 
-\subsection{Text Handling in PostScript Special}
+\subsection{PostScript Special}
 
 Text handling in PostScript special is extended to support CJK text.
-The following code draws Japanese text as shown in Figure~\ref{FIG:verttext}:
+The following code draws Japanese text like shown in Figure~\ref{FIG:verttext}:
 \begin{lstlisting}
 \special{pdf:mapline uprml UniJIS-UTF8-H yumindb.ttf}
 \special{ps: uprml findfont 16 scalefont setfont
@@ -1180,6 +1197,32 @@ The following code draws Japanese text as shown in Figure~\ref{FIG:verttext}:
   (...some Japanese text goes here...) show
 }
 \end{lstlisting}
+
+Please note that support for PostScript operators in \dvipdfmx\ is very
+limited. It is just enough for supporting \MP\ output. Only basic set of
+operators for arithmetic and math, stack operation and manupilation,
+graphics state, path construction and painting, glyph and font, are supported.
+See, Table~\ref{TABLE:PS} for the list of
+recognized PostScript operators.
+\begin{table}
+    \centering
+    \begin{tabular}{p{3cm}>{\raggedright\arraybackslash}p{8cm}}\hline
+        Classification & Operators \\ \hline\hline
+        Arithmetic \& Math & \code{add} \code{sub} \code{mul} \code{div} \code{neg} \code{truncate}\\
+        Stack Operation & \code{clear} \code{pop} \code{exch}\\
+        Graphis State & \code{gsave} \code{grestore}
+          \code{setlinewidth} \code{setdash} \code{setlinecap} \code{setlinejoin} \code{setmiterlimit} \code{setgray} \code{setrgbcolor} \code{setcmykcolor} \\
+        Coordinate System & \code{concat} \code{scale} \code{translate} \code{rotate} \code{idtransform} \code{dtransform}\\
+        Path Construction & \code{currentpoint} \code{newpath} \code{closepath} \code{moveto} \code{rmoveto} \code{lineto} \code{rlineto} \code{curveto} \code{rcurveto} \code{arc} \code{arcn} \code{clip} \code{eoclip} \\
+        Painting & \code{stroke} \code{fill} \\
+        Glyph \& Font & \code{show} \code{findfont} \code{scalefont} \code{setfont} \code{currentfont} \code{stringwidth}\\
+        \hline
+    \end{tabular}
+    \caption{PostScript operators recognized by \dvipdfmx.}\label{TABLE:PS}
+\end{table}
+
+It might be enough for the purpose of basic graphics drawing but as there are
+no support for conditionals and controls it is not enough for complicated tasks.
 
 \section{Incompatible Changes}\label{SEC:compatibility}
 
@@ -1267,6 +1310,33 @@ embedding from Japan Typography Association (in Japanese):\medskip
 \medskip
 
 \dvipdfmx\ does not support full embedding. Only subset embedding is supported.
+
+\section{Important Changes}
+
+Here is a list of important changes since the \TeX\ Live 2016 release:
+\begin{itemize}
+\item Changes to make PDF/A creation easier: Always write CIDSet and CharSet
+for embedded fonts. Do not compress XMP metadata.
+\item Merge from libdpx for p\TeX-ng by Clerk Ma.
+\item Addition of \code{STHeiti-Regular-Acro} for CJK `Standard' fonts.
+\item Command line option \option{-p} takes precedence over \code{papersize}
+and \code{pagesize} specials.
+\item Fixed serious bugs in supporting `\code{unicode}' encoding:
+OpenType Layout Feature \code{vert} and \code{vrt2} was not enabled.
+Support for format 2 CFF charsets was broken.
+\item Added simplified version of OpenType Layout support: The `\option{-l}'
+option in fontmaps.
+\end{itemize}
+The full \code{ChangeLog} entries can be viewed via the web interface of \TeX\
+Live SVN repository:
+\medskip
+
+\url{http://www.tug.org/svn/texlive/trunk/Build/source/texk/}
+\medskip
+
+There was an undocumented feature for supporting OpenType Layout but it was
+dropped. Simplified support for OpenType Layout was intorduced instead.
+
 
 \renewcommand{\refname}{Further Reading}
 \begin{thebibliography}{99}
