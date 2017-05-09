@@ -74,8 +74,9 @@
 \usepackage{marginnote}
 \renewcommand*{\marginfont}{\footnotesize\itshape}
 \usepackage[noorphans,font=itshape]{quoting}
-\newcommand{\package}[1]{{\itshape #1}}
+\newcommand{\package}[1]{\textit{#1}}
 \newcommand{\code}[1]{\mbox{\texttt{#1}}}
+\newcommand{\keyword}[1]{\textit{#1}}
 \newcommand{\option}[1]{\mbox{`\texttt{#1}'}}
 \newcommand{\dvipdfm}{\texttt{dvipdfm}}
 \newcommand{\dvipdfmx}{\texttt{dvipdfmx}}
@@ -83,6 +84,9 @@
 \newcommand{\deprecated}[1]{\marginnote{\addfontfeatures{Color=CC3333}#1}}
 \newcommand{\newfeature}[1]{\marginnote{\addfontfeatures{Color=3366CC}#1}}
 \newcommand{\lnum}[1]{{\addfontfeatures{RawFeature=+lnum}#1}}
+% For placeing drawings via \special
+\newcommand{\specialbox}[3]{%
+\makebox[#1][l]{\raisebox{-#2}[0bp][#2]{\special{#3}}}}
 \usepackage{fancyhdr}
 \pagestyle{fancy}
 %\lhead{}
@@ -486,9 +490,15 @@ object stream introduced in \lnum{PDF-1.5} are also supported.
 
 \chapter{Graphics}
 
-\section{Graphics and Image Format}\label{SEC:graphics}
+\section{Inclusion of Images}\label{SEC:graphics}
 
-Graphics support was mostly rewritten.
+The basics of incorporating images into output PDF is the same as in \dvipdfm.
+\LaTeX\ users can simply use the \package{graphicx} package (possibly with the
+driver option \code{dvipdfmx}) to do this. This section is \emph{not} for
+providing a how-to guide to include images into output PDF files. Just for
+supported graphics and image formats along with supported features.
+
+Graphics support was mostly rewritten in \dvipdfmx.
 Support for BMP and JPEG\lnum{2000} was added. An effort to preserve more
 information originally found in included images, e.g., embedded ICC Profiles
 and XMP Metadata, was made.
@@ -505,7 +515,7 @@ EPS. All other format images, such as SVG and PostScript, must be converted to
 other format supported by \dvipdfmx\ before inclusion.
 The \option{-D} option, as in \dvipdfm, can be used for filtering images.
 
-\subsection{PNG and JPEG}
+\subsubsection{PNG and JPEG}
 
 PNG and JPEG are supported as in \dvipdfm.
 
@@ -516,7 +526,7 @@ XMP Metadata is also supported.
 
 Predictor filter may be applied before compression, which results in better
 compression for larger images. \dvipdfmx\ supports TIFF Predictor 2 and PNG
-optimum filter. However, there are yet no way to specify which predictor
+optimum filters. However, there are yet no way to specify which predictor
 function is to be used.
 Using predictor filters usually gives better compression for images
 but there is a case that compression speed becomes significantly slower.
@@ -531,9 +541,9 @@ See, discussion on\medskip
 
 JPEG is relatively well supported. \dvipdfmx\ supports embedded ICC Profiles
 and CMYK color. Embedded XMP metadata is also supported.
-\dvipdfmx\ uses JFIF or Exif data to determin image's physical size.
+JFIF or Exif data is used to determin image's physical size.
 
-\subsection{PDF and ``MPS''}
+\subsubsection{PDF and ``MPS''}
 
 PDF inclusion is supported as in \dvipdfm, with various important enhancement
 over \dvipdfm\ for robust inclusion. \dvipdfmx\ can handle cross-reference
@@ -553,12 +563,12 @@ includes 3rd page of `foo.pdf' with boundary box set to \code{ArtBox}.
 
 
 For \MP\ generated EPS files, multi-byte encoding support is added.
-\dvipdfmx\ also supports ``\MP\ mode'': When \dvipdfmx\ is invoked with
+\dvipdfmx\ also supports ``\MP\ mode''. When \dvipdfmx\ is invoked with
 \option{-M} option, it enters in \MP\ mode and processes a \MP\
 generated EPS file as input.%
 \footnote{\code{prologue} must be set to \code{2}.}
 
-\subsection{Additional Supported Formats}
+\subsubsection{Additional Supported Formats}
 
 BMP is supported but limited to uncompressed or RLE-compressed raster
 images. Extensions are not (won't be) supported.
@@ -568,7 +578,7 @@ subset as required by PDF spec. It is not well supported and still in
 an experimental stage. J2C format and transparency are not supported.
 
 
-\section{Image Cache}
+\subsection{Image Cache}
 
 Caching of images generated via filtering command specified with \option{-D}
 option is supported. It solves the problems that image inclusion becomes very
@@ -580,21 +590,175 @@ Use \option{-I} option to enable this feature:
 -I 24
 \end{lstlisting}
 where the integer represents the life of cache files, 24 hours in this example.
+Zero and negative values have a special meaning.
+Value 0 for ``erase old cached images while leaving newly created one'',
+-1 for ``erase all cached images'', and -2 for ``ignore image cache''.
+Default value is set to -2.
+
+\section{Graphics Drawing}
+
+This section is not intended to be a guide for graphics drawing packages,
+rather, a short introduction to PDF graphics drawing.
+
+\dvipdfmx\ does not offer a heigh level interface to draw graphics objects.
+What can be done is to write raw PDF graphics drawing codes and insert them
+into output via the \code{special} command. Just to show an example,
+the following code:
+\begin{lstlisting}
+\special{pdf:content
+  1 0 0 1 0 0 cm
+  0 100 m
+  80 100 120 80 120 0 c
+  S
+}
+\end{lstlisting}
+draws a Bézier curve as,
+\begin{center}
+\specialbox{120bp}{100bp}{pdf:content 1 0 0 1 0 0 cm 0 100 m 80 100 120 80 120 0 c S}
+\end{center}
+
+This illustrates a typical example of PDF graphics drawings. It consists of
+three parts; setting graphics state, constructing a path, and painting a path.
+A graphics object is specified as a sequence of operators and thier operands
+using \emph{postfix notation}. \keyword{Graphics state operators} comes first,
+\code{cm} in this example sets the current transformation matrix (CTM). Then,
+\keyword{path construction} operators follow; move to position $(0, 100)$,
+append a Bézier curve from current point to $(120, 0)$ with control points
+$(80, 100)$ and $(120, 80)$. Finally, a \keyword{path painting} operator
+comes to draw constructed path. In this example the stroking operator \code{S}
+is used.
+
+\subsection{Guide to PDF Graphics Operators}
+
+This section is for a quick introduction to each graphics operators.
+
+\subsubsection{Graphics State Operators}
+
+The \code{cm} operator modifies CTM by concatinating the specified matrix.
+Operands given to this operators are six numbers each representing
+transformation matrix elements:
+Translation represented as $[1, 0, 0, 1, t_x, t_y]$,
+scaling $[s_x, 0, 0, s_y, 0, 0]$,
+rotation $[\cos\theta, \sin\theta, -\sin\theta, \cos\theta, 0, 0]$.
+
+To uniformly scale the object, just use
+\begin{lstlisting}
+2.0 0 0 2.0 0 0 cm
+\end{lstlisting}
+
+The \code{w} operator sets the line width. For examples,
+`\code{2 w}' sets the line width to 2.
+
+An example of drawing a rotated rectangle:
+\begin{lstlisting}
+0.866 0.5 -0.5 0.866 30 2 cm 5 w 0 0 100 50 re S
+\end{lstlisting}
+\begin{center}
+\specialbox{120bp}{96bp}{pdf:content 0.866 0.5 -0.5 0.866 30 2 cm 5 w 0 0 100 50 re S}%
+\end{center}
+
+To specify colors, use \code{RG}, \code{rg}, \code{K}, and \code{k} operators,
+for RGB or CMYK color for stroking (upper-case) and filling (lower-case).
+\begin{lstlisting}
+0.866 0.5 -0.5 0.866 30 2 cm 5 w
+1 0.4 0 0 K 1 0 0 0 k
+0 0 100 50 re B
+\end{lstlisting}
+where the \code{B} operator fill and then stroke the path.
+\begin{center}
+\specialbox{120bp}{96bp}{pdf:content 0.866 0.5 -0.5 0.866 30 2 cm 5 w
+1 0.4 0 0 K 1 0 0 0 k 0 0 100 50 re B}
+\end{center}
+
+\subsubsection{Path Construction Operators}
+
+Path construction normally start with a \code{m} operator and then a sequence of
+path construction operators follows. The path currently under construction is
+called the \keyword{current path}. A sequence of path construction operators
+append segments of path to the current path and then move the
+\keyword{current point} to the end point of appended path.
+A typical sequence of path construction looks like:
+\begin{lstlisting}
+100 50 m
+100 78 78 100 50 100 c
+22 100 0 78 0 50 c
+0 22 22 0 50 0 c
+78 0 100 22 100 50 c
+S
+\end{lstlisting}
+\begin{center}
+\specialbox{120bp}{80bp}{pdf:content
+100 50 m
+100 78 78 100 50 100 c
+22 100 0 78 0 50 c
+0 22 22 0 50 0 c
+78 0 100 22 100 50 c
+S}
+\end{center}
+
+Table~\ref{TAB:operators} shows a list of path construction operators.
+Those who are accustomed to the PostScript language should note that in PDF
+the current path under construction is not part of the graphics state,
+and hece is \emph{not} saved and restored along with the other graphics state
+parameters.
+
+\begin{table}
+    \centering
+    \begin{tabular}{llp{6.9cm}}\hline
+      Operands & Operator & Description \\ \hline\hline
+      $x$ $y$ & \code{m} & Begin a new path by moving the current point specified by given operands.\\
+      $x$ $y$ & \code{l} & Append a line segment from the current point to the point specified.\\
+      $x_1$ $y_1$ $x_2$ $y_2$ $x_3$ $y_3$ & \code{c} & Append a Bézier curve to the current path. Two Control points and the end point given as operands.\\
+      $x_2$ $y_2$ $x_3$ $y_3$ & \code{v} & Append a Bézier curve to the current path. Using the current point and first two operand as the Bézier control points.\\
+      $x_1$ $y_1$ $x_3$ $y_3$ & \code{y} & Append a Bézier curve to the current path. The second
+      control point coincides with the end point.\\
+      --- & \code{h} & Close the current path by appending a straight line segment from the current point to the starting point of the path.\\
+      $x$ $y$ \textit{width} \textit{height} & \code{re} & Append a rectangle. First two operands for the position of lower-left corner, third and forth operand representing width and
+      height.\\
+      \hline
+    \end{tabular}
+    \caption{List of path construction operators. All operators move the current point to the end point of appended path.}\label{TAB:operators}
+\end{table}
+
+\subsubsection{Path Painting Operators}
+
+There are basically four kind of path painting operators: \code{S}, \code{f},
+\code{B}, and \code{n}. The first three for ``stroke'', ``fill'', and
+``fill then stroke'' operators respectively, and the last one \code{n}
+paints nothing but end the path object. For filling operators, there are
+two kind of operators depending on how ``insideness'' of points are determined:
+the \keyword{non-zero winding number rule} and the \keyword{even-odd rule}.
+The even-odd rule operators are \code{f*} and \code{B*}.
+
+The following example illustrates the difference:
+\begin{lstlisting}
+0 0 100 100 re 20 20 60 60 re f
+1 0 0 1 120 0 cm
+0 0 100 100 re 20 20 60 60 re f*
+\end{lstlisting}
+\begin{center}
+\specialbox{220bp}{100bp}{pdf:content
+0 0 100 100 re 20 20 60 60 re f
+1 0 0 1 120 0 cm
+0 0 100 100 re 20 20 60 60 re f*}
+\end{center}
+
+
 
 \chapter{Specials}
 
-Several DVI \code{special} commnads are added for more flexible PDF generation:
+Several \code{special} commnads are added for more flexible PDF generation:
 Creation of arbitrary stream object, controlling \dvipdfmx\ behavior, and some
 specials which might be useful for graphics drawing packages.
 
-\section{PDF Special}\label{SEC:specials}
+\section{PDF Specials}\label{SEC:specials}
 
 This section briefly describes additions to \dvipdfm's PDF (\code{pdf:})
-special with a few examples.
+specials.
 
-\subsection{Additions to PDF Special}
+\subsection{Additions to PDF Specials}
 
-PDF object manipulation is key features of PDF special.
+PDF object manipulation is a key feature of PDF specials.
 The \code{pdf:fstream} special is added, which enables creation of PDF stream
 object from an existing file. The syntax of this special is,
 \begin{lstlisting}
@@ -653,8 +817,7 @@ A typical usage of this special is:
 ...some text goes here...
 \special{pdf:code Q}
 \end{lstlisting}
-which changes text rendering mode to 1, as shown in Figure~\ref{FIG:trmode} for
-example.
+which changes text rendering mode to 1, as shown in Figure~\ref{FIG:trmode}.
 
 \begin{figure}
 \centering
@@ -666,22 +829,23 @@ example.
 \end{figure}
 
 Be careful on using this special as it is very easy to generate
-broken PDF files. The \code{bcontent} and \code{econtent} pair is fragile and
-often incompatible to other groups of special commands. It is not
-always guaranteed to work as `expected'.
+broken PDF files. The \code{bcontent} and \code{econtent} pair is somewhat
+fragile and might be incompatible to other groups of special commands.
+It may not always be guaranteed to work as `expected'.
 
 \subsection{PDF Special Examples}
 
 This section is intended to be a hint for advanced users.
 Uninterested users can safely skip this section.
 
-\subsubsection{Annotation}
+\subsubsection{Annotations}
 
-In this section, some useful special commands for creating \textit{annotations}
+In this section, some useful special commands for creating \keyword{annotations}
 are explained. Note that viewer support is required for annotations to be
 shown correctly.
 
-First start with a very simple \textit{Text Annotation} for attaching a comment:
+First start with a very simple \keyword{Text Annotation} for attaching a
+comment. This feature is supported by many PDF viewer applications.
 \marginnote{\special{pdf:ann width 20bp height 20bp
   <<
      /Type     /Annot
@@ -707,17 +871,15 @@ First start with a very simple \textit{Text Annotation} for attaching a comment:
 \end{lstlisting}
 \code{pdf:ann} special is used to create an annotation.
 
-Likewise, \textit{Rubber Stamp Annotation},
+Likewise, \keyword{Rubber Stamp Annotation},
 \begin{center}
-\makebox[150bp][l]{%
-\raisebox{-50bp}[0bp][50bp]{%
-\special{pdf:ann width 150bp height 50bp
+\specialbox{150bp}{50bp}{pdf:ann width 150bp height 50bp
   <<
      /Type     /Annot
      /Subtype  /Stamp
      /Name     /Approved
   >>
-}}}
+}
 \end{center}
 
 \begin{lstlisting}
@@ -735,23 +897,22 @@ can be used in place of \code{Approved}.
 One can create thier own stamps. For this purpose, specials
 \code{pdf:bxobj} and \code{pdf:exobj} can be used for designing stamps.
 Those specials ``capture'' all typset material enclosed by them into a
-\textit{Form XObject}, which is a reusable graphics object like included images.
+\keyword{Form XObject}, which is a reusable graphics object like included images.
 
 For a simple example,
 \begin{lstlisting}
 \special{pdf:bxobj @MyStamp
-           width 280bp height 0bp depth 40bp}
-\fontsize{40bp}{40bp}\selectfont
-\addfontfeature{Color=FF9933}My Own Stamp
+             width 280pt height 0pt depth 40pt}
+\addfontfeature{Scale=4,Color=FF9933}My Own Stamp
 \special{pdf:exobj}
 \end{lstlisting}
 It captures typeset material ``My Own Stamp'' (this example uses \XeTeX\
-specific command for changing text color) into an object \code{MyStamp}
-for later reuse.
-Then, \code{AP} (\textit{appearance dicrionary}) entry for controling
+specific command for changing font size and text color) into an object
+\code{MyStamp} for later reuse.
+Then, \code{AP} (\keyword{appearance dicrionary}) entry for controling
 the appearance of annotations is used in the annotation dictionary:
 \begin{lstlisting}
-\special{pdf:ann width 280bp height 40bp
+\special{pdf:ann width 280pt height 40pt
   <<
     /Type    /Annot
     /Subtype /Stamp
@@ -759,25 +920,24 @@ the appearance of annotations is used in the annotation dictionary:
   >>
 }
 \end{lstlisting}
+Text stored in \code{@MyStamp} is used as ``Normal'' (\code{AP} entry \code{N})
+appearance. (\code{R} for ``Rollover'' and \code{D} for `Down'' can be used.)
 
-\parbox[t][0bp][c]{280bp}{%
-\special{pdf:bxobj @MyStamp width 280bp height 0bp depth 40bp}%
-\fontsize{40bp}{40bp}\selectfont%
-\addfontfeature{Color=FF9933}My Own Stamp%
+\parbox[t][0pt][c]{280pt}{%
+\special{pdf:bxobj @MyStamp width 280pt height 0pt depth 40pt}%
+\addfontfeature{Scale=4,Color=FF9933}My Own Stamp%
 \special{pdf:exobj}%
 }
 
 The result is:
 \begin{center}
-\makebox[280bp][l]{%
-\raisebox{0bp}[40bp][0bp]{%
-\special{pdf:ann width 280bp height 40bp
+\specialbox{280bp}{40bp}{pdf:ann width 280pt height 40pt
   <<
     /Type    /Annot
     /Subtype /Stamp
     /AP      << /N @MyStamp >>
   >>
-}}}
+}
 \end{center}
 
 With the following code, \dvipdfmx\ reads source file and creates a stream
@@ -827,23 +987,25 @@ at least for the following standard icons: \code{Graph}, \code{PushPin},
 
 \subsubsection{Special Color Space}
 
-This section gives various examples of using \textit{Special color spaces}.
-Examples in this section have a common structure. They consist of, essentially,
+This section gives various examples of using \keyword{Special color spaces}.
+Examples in this section have a common structure. They consist of essentially
 three parts. The first part is for definining color space itself.
-PDF object creation commands \code{pdf:obj} and \code{pdf:stream} are used
-for this purpose. Then, the second is for registering color space resources in
-page's \textit{Resource Dicrionary}. It can be done via:
+PDF object creation commands like \code{pdf:obj} and \code{pdf:stream} are used
+for this purpose. Next is for registering color space resources in the page's
+\keyword{Resource Dicrionary}. It can be done via \code{pdf:put} command as,
 \begin{lstlisting}
 \special{pdf:put @resource <<
   /Category << ...key-value pairs... >>
 >>}
 \end{lstlisting}
-where \code{@resource} represents current page's Resource Dictionary.
-Finally, drawing operators are inserted, with or with a combination of
-text and, \code{pdf:code} or \code{pdf:contents} specials.
+where \code{@resource} represents current page's Resource Dictionary and
+\code{Category} is for category of each resources such as \code{ColorSpace}.
+Finally, graphics objects are placed, with or with a combination of
+text and, PDF drawing operators inserted by \code{pdf:code} or
+\code{pdf:contents} specials.
 
 %%EXAMPLE: Separation Color Space
-The first example is \textit{Separation} color space:
+The first example is \keyword{Separation} color space:
 \special{pdf:stream @TintTransform1
   ({0 exch dup 0.62 mul exch 0})
   <<  /FunctionType 4
@@ -915,10 +1077,11 @@ The first example is \textit{Separation} color space:
 }
 \end{lstlisting}
 
-\code{TintTransform}'s defined here are functions for transforming \textit{tint}
-values into approximate colors in the \textit{alternate color space}
+\code{TintTransform}'s defined here are functions for transforming
+\keyword{tint} values into approximate colors in the
+\keyword{alternate color space}
 (\code{DeviceCMYK} in this example). PostScript calculator functions are used
-for converting single component values representing ``Orange'' or ``Green''
+for converting a single component value representing ``Orange'' or ``Green''
 into four component CMYK values to approximate those colors. The ``Orange''
 color $v$ is approximated as $(0, 0.62v, v, 0)$ in CMYK color space for
 alternate display here.
@@ -935,7 +1098,7 @@ color space with an ICC profile) and Special color spaces (e.g., indexed,
 separation, and shading and patterns).
 
 %%EXAMPLE: Shading
-Another example is \textit{shading pattern}:
+Another example is \keyword{shading pattern}:
 \begin{lstlisting}
 \special{pdf:put @resources <<
   /Shading <<
@@ -969,11 +1132,11 @@ This example shows an axial shading (\code{ShadingType} 2) pattern.
 }
 \end{center}
 
-Type 2 (Exponential Interpolation) \textit{Function} is used for mapping
+Type 2 (Exponential Interpolation) \keyword{Function} is used for mapping
 coordinate values into color values. The above example, with the exponent
 $N=1$, is just a simple linear-gradient.
 
-The final examples is a \textit{tiling pattern}.
+The final examples is a \keyword{tiling pattern}.
 \begin{lstlisting}
 \special{pdf:stream @MyPattern
     (0.16 0 0 0.16 0 0 cm 4 w
@@ -1013,7 +1176,7 @@ The final examples is a \textit{tiling pattern}.
 The above example defines a tiling pattern. The content stream containing
 painting operators, \code{m} for ``move-to'', \code{c} for ``curve-to'',
 \code{f} for ``fill'', and \code{S} for ``stroke'', defines the appearance of
-the \textit{pattern cell} for this tiling pattern. With the following code,
+the \keyword{pattern cell} for this tiling pattern. With the following code,
 \begin{lstlisting}
 \special{pdf:put @resources
     <<
@@ -1026,7 +1189,7 @@ the \textit{pattern cell} for this tiling pattern. With the following code,
     0 0 320 100 re f
 }
 \end{lstlisting}
-A box filled with a tiling pattern defined above is drawn.
+A box filled with the tiling pattern defined above is drawn.
 \special{pdf:stream @MyPattern
     (0.16 0 0 0.16 0 0 cm 4 w
      50 0 m 50 28 28 50 0 50 c S 100 50
@@ -1149,7 +1312,7 @@ sets the \dvipdfmx's compatibility flags. See, the section
 ``\hyperref[SEC:compatibility]{Incompatible Changes}'' for an explanation of
 compatibility flags.
 
-\section{PS Special}
+\section{PS Specials}
 
 PS (PostScript) specials can be used to insert a raw PostScript code for drawing
 graphics objects and transforming subsequent text and graphics.
