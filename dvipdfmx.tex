@@ -490,7 +490,7 @@ object stream introduced in \lnum{PDF-1.5} are also supported.
 
 \chapter{Graphics}
 
-\section{Inclusion of Images}\label{SEC:graphics}
+\section{Image Inclusion}\label{SEC:graphics}
 
 The basics of incorporating images into output PDF is the same as in \dvipdfm.
 \LaTeX\ users can simply use the \package{graphicx} package (possibly with the
@@ -598,10 +598,11 @@ Default value is set to -2.
 \section{Graphics Drawing}
 
 This section is not intended to be a guide for graphics drawing packages,
-rather, a short introduction to PDF graphics drawing.
+rather, to be a short introduction to PDF graphics drawing. Not specific
+to \dvipdfmx. Uninterested people can simply skip this section.
 
 \dvipdfmx\ does not offer a heigh level interface to draw graphics objects.
-What can be done is to write raw PDF graphics drawing codes and insert them
+What can be done is to write raw PDF graphics drawing codes and to insert them
 into output via the \code{special} command. Just to show an example,
 the following code:
 \begin{lstlisting}
@@ -612,10 +613,12 @@ the following code:
   S
 }
 \end{lstlisting}
-draws a Bézier curve as,
+draws a Bézier curve,
 \begin{center}
 \specialbox{120bp}{100bp}{pdf:content 1 0 0 1 0 0 cm 0 100 m 80 100 120 80 120 0 c S}
 \end{center}
+The \code{pdf:content} special is used here which is useful for inserting an
+isolated graphics object.
 
 This illustrates a typical example of PDF graphics drawings. It consists of
 three parts; setting graphics state, constructing a path, and painting a path.
@@ -630,7 +633,9 @@ is used.
 
 \subsection{Guide to PDF Graphics Operators}
 
-This section is for a quick introduction to each graphics operators.
+PDF employs essentially the same imaging model as PostScript.
+So, it is easy to learn about PDF graphics drawing for people who are
+well accustomed to PostScript.
 
 \subsubsection{Graphics State Operators}
 
@@ -646,8 +651,8 @@ To uniformly scale the object, just use
 2.0 0 0 2.0 0 0 cm
 \end{lstlisting}
 
-The \code{w} operator sets the line width. For examples,
-`\code{2 w}' sets the line width to 2.
+The \code{w} operator sets the line width, e.g., `\code{2 w}' sets the line
+width to 2.
 
 An example of drawing a rotated rectangle:
 \begin{lstlisting}
@@ -670,10 +675,26 @@ where the \code{B} operator fill and then stroke the path.
 1 0.4 0 0 K 1 0 0 0 k 0 0 100 50 re B}
 \end{center}
 
+A dash pattern can be specified with \code{d} operator.
+Operands for this operator are the \keyword{dash array} and
+the \keyword{dash phase}.
+For examples, to specify a dash pattern with 6-on 4-off starting with phase 0:
+\begin{lstlisting}
+[6 4] 0 d 2 w 0 0 m 320 0 l S
+\end{lstlisting}
+\begin{center}
+\specialbox{320bp}{30bp}{pdf:content
+1 0 0 1 0 20 cm [6 4] 0 d 2 w 0 0 m 320 0 l S}
+\end{center}
+
+Other important operators are \code{q} and \code{Q}, which saves and restores
+graphics state.
+
 \subsubsection{Path Construction Operators}
 
-Path construction normally start with a \code{m} operator and then a sequence of
-path construction operators follows. The path currently under construction is
+Path construction normally start with a \code{m} operator which moves the
+current point to a specified position and then a sequence of path construction
+operators follows. The path currently under construction is
 called the \keyword{current path}. A sequence of path construction operators
 append segments of path to the current path and then move the
 \keyword{current point} to the end point of appended path.
@@ -695,6 +716,7 @@ S
 78 0 100 22 100 50 c
 S}
 \end{center}
+This example is an approximated circle drawn by four Bézier curves.
 
 Table~\ref{TAB:operators} shows a list of path construction operators.
 Those who are accustomed to the PostScript language should note that in PDF
