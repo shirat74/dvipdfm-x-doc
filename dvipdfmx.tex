@@ -488,15 +488,18 @@ There are various other improvements over \dvipdfm. The most notable one is
 more improved PDF input and output support: The cross-reference stream and
 object stream introduced in \lnum{PDF-1.5} are also supported.
 
-\chapter{Graphics}
+\chapter{Graphics}\label{SEC:graphics}
 
-\section{Image Inclusion}\label{SEC:graphics}
+This chapter consists of two parts; about inclusion of images and about drawing
+graphics. They are not intended to be a guide for using graphics packages.
+
+\section{Image Inclusion}
 
 The basics of incorporating images into output PDF is the same as in \dvipdfm.
 \LaTeX\ users can simply use the \package{graphicx} package (possibly with the
 driver option \code{dvipdfmx}) to do this. This section is \emph{not} for
-providing a how-to guide to include images into output PDF files. Just for
-supported graphics and image formats along with supported features.
+providing a how-to guide to include images but just for supported graphics and
+image formats along with supported features.
 
 Graphics support was mostly rewritten in \dvipdfmx.
 Support for BMP and JPEG\lnum{2000} was added. An effort to preserve more
@@ -597,14 +600,10 @@ Default value is set to -2.
 
 \section{Graphics Drawing}
 
-This section is not intended to be a guide for graphics drawing packages,
-rather, to be a short introduction to PDF graphics drawing. Not specific
-to \dvipdfmx. Uninterested people can simply skip this section.
-
-\dvipdfmx\ does not offer a heigh level interface to draw graphics objects.
-What can be done is to write raw PDF graphics drawing codes and to insert them
-into output via the \code{special} command. Just to show an example,
-the following code:
+\dvipdfmx\ does not offer a high level interface to draw graphics objects.
+A possible way to draw grahpics is to write raw PDF graphics drawing codes and
+then to insert them into the output via the \code{special} command.
+To show an example, the following code:
 \begin{lstlisting}
 \special{pdf:content
   1 0 0 1 0 0 cm
@@ -620,7 +619,7 @@ draws a Bézier curve,
 The \code{pdf:content} special is used here which is useful for inserting an
 isolated graphics object.
 
-This illustrates a typical example of PDF graphics drawings. It consists of
+This illustrates a typical example of PDF graphics drawing. It consists of
 three parts; setting graphics state, constructing a path, and painting a path.
 A graphics object is specified as a sequence of operators and thier operands
 using \emph{postfix notation}. \keyword{Graphics state operators} comes first,
@@ -628,21 +627,32 @@ using \emph{postfix notation}. \keyword{Graphics state operators} comes first,
 \keyword{path construction} operators follow; move to position $(0, 100)$,
 append a Bézier curve from current point to $(120, 0)$ with control points
 $(80, 100)$ and $(120, 80)$. Finally, a \keyword{path painting} operator
-comes to draw constructed path. In this example the stroking operator \code{S}
+comes to draw the constructed path.
+In this example the stroking operator \code{S}
 is used.
+
+\subsection{The \code{pdf:content} Special}
+
+The \code{pdf:content} special can be used for drawing an \emph{isolated}
+graphics object. It sets the origin of graphics drawing operators supplied to
+this command to the position where it is inserted.
+The whole content is enclosed by a pair of graphics state save-restore
+operators. So for examples, a color change made within a \code{pdf:content}
+command takes an effect only within the content of this special.
 
 \subsection{Guide to PDF Graphics Operators}
 
 PDF employs essentially the same imaging model as PostScript.
 So, it is easy to learn about PDF graphics drawing for people who are
-well accustomed to PostScript.
+well accustomed to PostScript. This section is intended to be a short guide
+for PDF graphics operators.
 
 \subsubsection{Graphics State Operators}
 
 The \code{cm} operator modifies CTM by concatinating the specified matrix.
 Operands given to this operators are six numbers each representing
 transformation matrix elements:
-Translation represented as $[1, 0, 0, 1, t_x, t_y]$,
+translation represented as $[1, 0, 0, 1, t_x, t_y]$,
 scaling $[s_x, 0, 0, s_y, 0, 0]$,
 rotation $[\cos\theta, \sin\theta, -\sin\theta, \cos\theta, 0, 0]$.
 
@@ -652,9 +662,7 @@ To uniformly scale the object, just use
 \end{lstlisting}
 
 The \code{w} operator sets the line width, e.g., `\code{2 w}' sets the line
-width to 2.
-
-An example of drawing a rotated rectangle:
+width to 2. Here is an example of drawing a rotated rectangle:
 \begin{lstlisting}
 0.866 0.5 -0.5 0.866 30 2 cm 5 w 0 0 100 50 re S
 \end{lstlisting}
@@ -662,8 +670,15 @@ An example of drawing a rotated rectangle:
 \specialbox{120bp}{96bp}{pdf:content 0.866 0.5 -0.5 0.866 30 2 cm 5 w 0 0 100 50 re S}%
 \end{center}
 
+Transformations can be sequentially applied; for the above example,
+\begin{lstlisting}
+1 0 0 1 30 2 cm 0.866 0.5 -0.5 0.866 0 0 cm
+5 w 0 0 100 50 re S
+\end{lstlisting}
+gives the same result.
+
 To specify colors, use \code{RG}, \code{rg}, \code{K}, and \code{k} operators,
-for RGB or CMYK color for stroking (upper-case) and filling (lower-case).
+for RGB or CMYK color for stroking (upper-case) and nonstroking (lower-case).
 \begin{lstlisting}
 0.866 0.5 -0.5 0.866 30 2 cm 5 w
 1 0.4 0 0 K 1 0 0 0 k
@@ -682,23 +697,74 @@ For examples, to specify a dash pattern with 6-on 4-off starting with phase 0:
 \begin{lstlisting}
 [6 4] 0 d 2 w 0 0 m 320 0 l S
 \end{lstlisting}
+draws the following dashed line:
 \begin{center}
 \specialbox{320bp}{30bp}{pdf:content
 1 0 0 1 0 20 cm [6 4] 0 d 2 w 0 0 m 320 0 l S}
 \end{center}
 
 Other important operators are \code{q} and \code{Q}, which saves and restores
-graphics state.
+the graphics state.
+\begin{lstlisting}
+1 0 0 1 30 2 cm
+q
+0.866 0.5 -0.5 0.866 0 0 cm
+[6 4] 0 d 2 w 0 0 100 50 re S
+Q
+-30 0 m 90 0 l S
+0 -2 m 0 96 l S
+\end{lstlisting}
+In the above example, \code{d}, \code{w}, and rotation only take effect within
+the \code{q}-\code{Q} block. The portion drawing two straight lines is
+unaffected.
+\begin{center}
+\specialbox{120bp}{96bp}{pdf:content
+1 0 0 1 30 2 cm
+q
+0.866 0.5 -0.5 0.866 0 0 cm
+[6 4] 0 d 2 w 0 0 100 50 re S
+Q
+-30 0 m 90 0 l S
+0 -2 m 0 96 l S
+}
+\end{center}
+
+For a (incomplete) list of graphics state operators, see
+Talbe~\ref{TAB:operatorsGS}.
+
+\begin{table}
+    \centering
+    \begin{tabular}{llp{7.6cm}}\hline
+        Operands & Operator & Description\\ \hline\hline
+        --- & \code{q} & Save the current graphics state.\\
+        --- & \code{Q} & Restore the previously saved graphics state.\\
+        $a$ $b$ $c$ $d$ $e$ $f$ & \code{cm} & Modify the current transformation matrix
+        by concatinating the specified matrix.\\
+        \textit{width} & \code{w} & Set the line width.\\
+        \textit{array} \textit{phase} & \code{d} & Set the line dash pattern.\\
+        $r$ $g$ $b$ & \code{RG} & Set the stroking color space to RGB and
+        set the stroking color as specified.\\
+        $r$ $g$ $b$ & \code{rg} & Set the nonstroking color space to RGB and
+        set the nonstroking color as specified.\\
+        $c$ $m$ $y$ $k$ & \code{K} & Set the stroking color space to CMYK and
+        set the stroking color as specified.\\
+        $c$ $m$ $y$ $k$ & \code{k} & Set the nonstroking color space to CMYK and
+        set the nonstroking color as specified.\\
+        \hline
+    \end{tabular}
+    \caption{A few examples of graphics state operators and color operators.}%
+    \label{TAB:operatorsGS}
+\end{table}
 
 \subsubsection{Path Construction Operators}
 
 Path construction normally start with a \code{m} operator which moves the
-current point to a specified position and then a sequence of path construction
-operators follows. The path currently under construction is
+current point to a specified position and then a sequence of other path
+construction operators follows. The path currently under construction is
 called the \keyword{current path}. A sequence of path construction operators
 append segments of path to the current path and then move the
 \keyword{current point} to the end point of appended path.
-A typical sequence of path construction looks like:
+A typical sequence of path construction looks like,
 \begin{lstlisting}
 100 50 m
 100 78 78 100 50 100 c
@@ -720,7 +786,7 @@ This example is an approximated circle drawn by four Bézier curves.
 
 Table~\ref{TAB:operators} shows a list of path construction operators.
 Those who are accustomed to the PostScript language should note that in PDF
-the current path under construction is not part of the graphics state,
+the current path is not part of the graphics state,
 and hece is \emph{not} saved and restored along with the other graphics state
 parameters.
 
@@ -764,19 +830,21 @@ The following example illustrates the difference:
 1 0 0 1 120 0 cm
 0 0 100 100 re 20 20 60 60 re f*}
 \end{center}
-
-
+The ``interior'' of the ``inner'' square has a non-zero even winding number.
+(In this example, counter-clockwise direction is assumed for both of
+two \code{re} operators.)
 
 \chapter{Specials}
 
-Several \code{special} commnads are added for more flexible PDF generation:
-Creation of arbitrary stream object, controlling \dvipdfmx\ behavior, and some
-specials which might be useful for graphics drawing packages.
 
 \section{PDF Specials}\label{SEC:specials}
 
 This section briefly describes additions to \dvipdfm's PDF (\code{pdf:})
 specials.
+
+Several \code{special} commnads are added for more flexible PDF generation:
+creation of arbitrary stream object, controlling \dvipdfmx\ behavior, and some
+specials which might be useful for graphics drawing packages.
 
 \subsection{Additions to PDF Specials}
 
@@ -830,7 +898,7 @@ description of permission flags.
 
 Other notable extensions are \code{code}, \code{bcontent}, and
 \code{econtent}. The \code{code} special can be used to insert raw PDF graphics
-instructions into output page content stream. It is different from \dvipdfm's
+instructions into the output. It is different from \dvipdfm's
 \code{content} special in that it does not enclose contents with a \code{q}
 and \code{Q} (save-restore of graphics state) pair.
 A typical usage of this special is:
@@ -928,8 +996,8 @@ For a simple example,
 \addfontfeature{Scale=4,Color=FF9933}My Own Stamp
 \special{pdf:exobj}
 \end{lstlisting}
-It captures typeset material ``My Own Stamp'' (this example uses \XeTeX\
-specific command for changing font size and text color) into an object
+It captures typeset material ``My Own Stamp'' (this example uses \code{fontspec}
+package's command for changing font size and text color) into an object
 \code{MyStamp} for later reuse.
 Then, \code{AP} (\keyword{appearance dicrionary}) entry for controling
 the appearance of annotations is used in the annotation dictionary:
