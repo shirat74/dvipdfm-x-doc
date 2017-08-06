@@ -1087,8 +1087,9 @@ for this purpose. Next is for registering color space resources in the page's
   /Category << ...key-value pairs... >>
 >>}
 \end{lstlisting}
-where \code{@resource} represents current page's Resource Dictionary and
-\code{Category} is for category of each resources such as \code{ColorSpace}.
+where \code{@resource} is a special keyword representing current page's
+Resource Dictionary and \code{Category} (to be replaced by actual category
+name) is category name such as \code{ColorSpace}.
 Finally, graphics objects are placed, with or with a combination of
 text and, PDF drawing operators inserted by \code{pdf:code} or
 \code{pdf:contents} specials.
