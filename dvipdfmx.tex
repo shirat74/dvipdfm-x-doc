@@ -41,6 +41,7 @@
     colorlinks=true,%
     urlcolor=[rgb]{0.2,0.2,0.4},
     linkcolor=[rgb]{0.2,0.2,0.4},
+    citecolor=[rgb]{0.2,0.2,0.4},
     pdftitle={The Dvipdfmx User's Manual},%
     pdfauthor={The dvipdfmx project team},%
     pdfsubject={A User's Manual for Dvipdfmx and Xdvipdfmx.},%
@@ -199,7 +200,7 @@ available from its CTAN site:\medskip
 
 The minimal requirements for building \dvipdfmx\ is the \code{kpathsea} library.
 \code{zlib} for compression and \code{libpng} for PNG inclusion are highly
-recommended. Optionally, the libpaper library may be used to handle paper sizes.
+recommended. Optionally, the libpaper library may be used to handle paper size.
 
 This document only describes additions and modifications to \dvipdfm.
 Please refer the
@@ -488,10 +489,8 @@ There are various other improvements over \dvipdfm. The most notable one is
 more improved PDF input and output support: The cross-reference stream and
 object stream introduced in \lnum{PDF-1.5} are also supported.
 
-\chapter{Graphics}\label{SEC:graphics}
 
-This chapter consists of two parts; about inclusion of images and about drawing
-graphics. They are not intended to be a guide for using graphics packages.
+\chapter{Graphics}\label{SEC:graphics}
 
 \section{Image Inclusion}
 
@@ -836,21 +835,17 @@ two \code{re} operators.)
 
 \chapter{Specials}
 
-
 \section{PDF Specials}\label{SEC:specials}
-
-This section briefly describes additions to \dvipdfm's PDF (\code{pdf:})
-specials.
 
 Several \code{special} commnads are added for more flexible PDF generation:
 creation of arbitrary stream object, controlling \dvipdfmx\ behavior, and some
-specials which might be useful for graphics drawing packages.
+specials which might be useful for graphics drawing.
 
 \subsection{Additions to PDF Specials}
 
 PDF object manipulation is a key feature of PDF specials.
-The \code{pdf:fstream} special is added, which enables creation of PDF stream
-object from an existing file. The syntax of this special is,
+The \code{pdf:fstream} special is added in \dvipdfmx\ which enables creation of
+PDF stream object from an existing file. The syntax of this special is,
 \begin{lstlisting}
 pdf:fstream @identifier (filename) <<dictionary>>
 \end{lstlisting}
@@ -861,7 +856,7 @@ to the stream dictionary is optional.
 For examples, to incorporate a XMP Metadata,
 \begin{lstlisting}
 \special{pdf:fstream @xmp (test.xmp) <<
-    /Type /Metadata
+    /Type    /Metadata
     /Subtype /XML
 >>}
 \special{pdf:put @catalog << /Metadata @xmp >>}
@@ -922,6 +917,10 @@ Be careful on using this special as it is very easy to generate
 broken PDF files. The \code{bcontent} and \code{econtent} pair is somewhat
 fragile and might be incompatible to other groups of special commands.
 It may not always be guaranteed to work as `expected'.
+
+\subsection{Summary of PDF Specials}
+
+Please refer to the ``Dvipdfm User's Manual''.\cite{DVIPDFM}
 
 \subsection{PDF Special Examples}
 
@@ -1861,6 +1860,7 @@ dropped. Simplified support for OpenType Layout was intorduced instead.
 %\renewcommand{\refname}{Further Reading}
 \renewcommand{\bibname}{Further Reading}
 \begin{thebibliography}{99}
+\bibitem{DVIPDFM}  ''\href{http://mirrors.ctan.org/dviware/dvipdfm/dvipdfm.pdf}{Dvipdfm User's Manual}'' written by Mark~A.~Wicks.
 \bibitem{ADOBE} Adobe's PDF References and a free copy of
 \lnum{ISO 32000-1:2008} standard are available from
 ``\href{http://www.adobe.com/devnet/pdf.html}{PDF Technology Center}''
