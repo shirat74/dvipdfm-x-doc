@@ -2,6 +2,7 @@
 \usepackage{xltxtra}
 \usepackage{fontspec}
 \usepackage{microtype}
+\usepackage{xunicode}
 \usepackage{unicode-math}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% PLATFORM DEPENDENT INSTRUCTION HERE
@@ -1350,7 +1351,8 @@ transparency example:
   \special{pdf:code q /GS01 gs 1.0 0.8 0.2 rg}%
   α%
   \special{pdf:code 0.4 0.8 0.4 rg}%
-  \hspace{-0.3em}β%
+  \hspace{-0.3em}%
+  β%
   \hspace{-0.3em}\raisebox{0.5ex}{%
     \special{pdf:code 0.4 0.4 0.8 rg}%
     π%
@@ -1372,7 +1374,8 @@ transparency example:
   \special{pdf:code q /GS01 gs 1.0 0.8 0.2 rg}%
   α%
   \special{pdf:code 0.4 0.8 0.4 rg}%
-  \hspace{-0.3em}β%
+  \hspace{-0.3em}%
+  β%
   \hspace{-0.3em}\raisebox{0.5ex}{%
     \special{pdf:code 0.4 0.4 0.8 rg}%
     π%
@@ -1459,14 +1462,14 @@ This section is completely irrevant to \XeTeX\ users.
 \subsection{Extended Syntax and Options}
 
 Few options are available in \dvipdfmx\ in addition to the original dvipdfm's
-one. All options and features that makes \dvipdfmx\ to use unembedded fonts
-are deprecated, as by using them makes \dvipdfmx\ to create PDF files which can
-be non-compliant to the ISO standards.
+one. Please note that all features which makes \dvipdfmx\ to use
+non-embedded fonts are deprecated, as by doing so it makes \dvipdfmx\ to create
+PDF files which can be non-compliant to the ISO standards.
 
 \subsubsection{SFD Specification}
 
-For bundling up fonts split into multiple subfonts via SFD back into
-a single font, dvipdfmx supports an extended sytax of the form
+For bundling up a font split into multiple subfonts via SFD back into
+a single font, dvipdfmx supports extended sytax of the form
 \begin{lstlisting}
 tfm_name@SFD@  encoding  filename  options
 \end{lstlisting}
@@ -1475,13 +1478,13 @@ A typical example looks like:
 gbsn@EUC@  GB-EUC-H  gbsn00lp
 \end{lstlisting}
 where TFMs \code{gbsn00}, \code{gbsn01}, \code{gbsn02}... are mapped into a
-single font named \code{gbsn00lp} via the rule described in the SFD file
+single font named \code{gbsn00lp} via the rule described in SFD file
 \code{EUC}.
 
 \subsubsection{TrueType Collection Index}
 
 TrueType Collection index number can be specified with \code{:n:}
-in front of TrueType font name:
+in front of the TrueType font name:
 \begin{lstlisting}
 min10  H  :1:mincho
 \end{lstlisting}
@@ -1497,8 +1500,8 @@ min10  H  mincho  -i 1
 \deprecated{Use of this option is deprecated.}
 \noindent{}The character \option{!} in front of the font name can be used to
 indicate that the font shall not be embedded. This feature greatly reduces the
-size of the final PDF output, but the PDF file may not be viewed exactly in
-other systems on which appropriate fonts are not installed.
+size of the final PDF output, but the PDF file may not be viewed exactly the same
+in other systems on which appropriate fonts are not installed.
 \bigskip
 
 \noindent{}NOTE: \dvipdfmx\ always converts input encodings to CIDs and then
@@ -1636,71 +1639,66 @@ considered obsolete.
 \code{uni0130}, \code{zero.onum} and \code{T\_h.liga}.
 Each represents a glyph accessed with Unicode value \code{U+0130},
 oldstyle number for zero and ``Th'' ligature accessed via OpenType
-Layout GSUB Feature \code{onum} and \code{liga} respectively.
+Layout GSUB Feature \code{onum} and \code{liga}, respectively.
 Note that \dvipdfmx\ does not understand glyph names which directly
-use glyph indices such as \code{index0102} or \code{gid2104}, since those
-indices are private to each font.
+use a glyph index such as \code{index0102} or \code{gid2104}.
 
 When \dvipdfmx\ encounters a glyph name, e.g., \code{T\_h.liga}, it first looks
-for OpenType \code{post} table if such glyph exists; if it exists, then
-\dvipdfmx\ simply uses \code{post} talbe for mapping glyph name to glyph index;
+for OpenType \code{post} table if such glyph name exists; if it exists, then
+\dvipdfmx\ simply uses \code{post} table and maps the glyph name to glyph index;
 if not, \dvipdfmx\ tries to convert \code{T\_h} to Unicode sequence (U+0054
-U+0068 in this example) via the AGL mapping; then, OpenType cmap table is used
-to further converting resulting Unicode sequence to a sequence of glyph indices;
-finally, OpenType Layout Feature \code{liga} is applied to get desired glyph.
+U+0068 in this example) via the AGL mapping; then, OpenType \code{cmap} table is used
+to further convert resulting Unicode sequence to the sequence of glyph indices;
+finally, OpenType Layout Feature \code{liga} is applied to get the desired glyph.
 
-Glyph name of the form \code{a.swsh2} can be specified to denote 2nd swash
+A glyph name of the form \code{a.swsh2} can be specified to denote 2nd swash
 variant form of letter `a'.
 
 \subsection{CFF Conversion}
 
 \dvipdfmx\ supports on-the-fly PostScript Type1 to CFF (Type1C) conversion
-which greatly reduces size of resulting PDF files when using Type1 fonts.
+which greatly reduces size of the resulting PDF file when using Type1 fonts.
 Conversion is essentially `lossless' and there should not be any quality loss.
 However, due to differences in the ability of rasterizers, there might be
 noticeable differences on the rendering result.
 
-When using (older) Type1 fonts, \dvipdfmx\ may give the following warning:
+When (older) Type1 fonts are used, \dvipdfmx\ may give the following warning
+message:
 \begin{lstlisting}
 Obsolete four arguments of "endchar" will be used for Type1
 "seac" operator.
 \end{lstlisting}
 This happens when there is an accented character made from composite glyphs.
-This warning message is given as Adobe made the use of \code{endchar} operator
-for composite glyphs deprecated.
-
-However, as mentioned in
+This warning message is given as conversion can't be done without the use of
+deprecated \code{endchar} operator for composite glyphs. However, as mentioned in
 ``Appendix C Compatibility and Deprecated Operators'' of Adobe Technical
 Note \#5177,
 ``\href{http://wwwimages.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5177.Type2.pdf}{Type 2 Charstring Format}'',
-PDF applications are supposed to support this operator. Hence, this warning
-message can be ignored. Please note that deprecated use of \code{endchar}
-operator for compositing glyphs is not allowed in ordinary OpenType fonts.
-So, \dvipdfmx\ stops with an error if such font is encountered.
+PDF applications should support this operator and hence this warning
+message can be ignored.
 
 Use of Type1 font should be avoided as much as possible.
-Please consider using OpenType version of font.
+Please consider using OpenType version.
 
 \section{Font Licensing and Embedding}
 
-In OpenType format, information regarding how a font should be treated
-when creating documents can be recorded.%
+In OpenType font format, information regarding how a font should be treated
+when creating a document can be recorded.%
 \footnote{See, `` \href{http://www.microsoft.com/typography/otspec/os2.htm}{OpenType Sepcification: OS/2 -- OS/2 and Windows Metrics Table}''.}
-\dvipdfmx\ uses this information to decide whether embedding font is permitted.
+\dvipdfmx\ uses this information to decide whether font embedding is permitted.
 
-This font embedding information is indicated by a flag called
-\code{fsType}; each bit representing different restrictions on font
-embedding.
-If multiple flag bits are set in \code{fsType}, the least restrictive
+This font embedding information is indicated by the flag called \code{fsType}
+recorded in OpenType font files; each bit representing different restrictions on
+font embedding. If multiple flag bits are set in \code{fsType}, the least restrictive
 license granted takes precedence in \dvipdfmx.
-The \code{fsType} flag bits recognized by \dvipdfmx\ is as follows:
+The \code{fsType} flag bit recognized by \dvipdfmx\ is as follows:
 \begin{itemize}
     \item Installable embedding
     \item Editable embedding
     \item Embedding for Preview \& Print only
 \end{itemize}
-\dvipdfmx\ give the following warning message for fonts with `Preview \&
-Print only' setting:
+\dvipdfmx\ gives the following warning message for fonts with `Preview \& Print only'
+setting:
 \begin{verbatim}
   This document contains 'Preview & Print' only licensed font
 \end{verbatim}
@@ -1717,7 +1715,7 @@ of the editable-embedding flag and unrecognized license flag is set,
 the font is treated as editable-embedding allowed, however, if only
 unrecognized flags are set, the font is not embedded.
 
-Embedding flags are preserved in embedded font if the font is embedded
+Embedding flags are preserved in the embedded font if they are embedded
 as a TrueType font or a CIDFontType2 CID-keyed font.
 For all font embedded as a PostScript font (Type1C and CIDFontType0
 CID-keyed font), they are not preserved.
@@ -1725,9 +1723,9 @@ Only \code{Copyright} and \code{Notice} in the FontInfo dictionary are
 preserved in this case.
 
 Some font vendors put different embedding restrictions for different
-condition; e.g., font embedding might be not permitted for commercial
-materials unless you acquire ``commercial license'' separately.
-Please read EULA carefully before making decision on font usage.
+condition; e.g., font embedding might not be permitted for commercial
+use unless you acquire ``commercial license'' separately.
+Please read EULA carefully before making decision on the font usage.
 
 See, for examples,
 \href{http://www.adobe.com/products/type/font-licensing/font-embedding-permissions.html}{Adobe's site on font embedding permissions}
@@ -1748,59 +1746,102 @@ embedding from Japan Typography Association (in Japanese):\medskip
 
 \section{Encryption Support}\label{SEC:encryption}
 
-\dvipdfmx\ offers basic PDF password security support including
-256-bits AES encryption. Only ``Standard'' security handler is supported and
-public-key security handlers are currently not supported.
+\dvipdfmx\ offers basic PDF password security support including 256-bits AES encryption.
+Only ``Standard'' security handler is supported and Public-key security handler is not
+supported.
+
 Encryption is enabled by \option{-S} command line option.
+\begin{lstlisting}
+  dvipdfmx -S -K 128 -P 0x20
+\end{lstlisting}
+where \code{-K} and \code{-P} options are used to specify encryption key length and
+permission flags respectively, and are briefly explained in Table~\ref{TABLE:enc-options}.
 
-When encrypting the document, up to two passwords can be specified --
-an owner password and a user password. If a user attempts to open an encrypted
-document that has a user password, PDF applications prompt for a password.
-Correctly supplying either password enables the user to open the document to
-display or to access to the contents.
+\begin{table}
+  \centering
+  \begin{tabular}{lp{8cm}}\hline
+      Option & Description \\ \hline\hline
+      \code{-S} & Enable PDF encryption. \\
+      \code{-K} \textit{number} & Set encryption key length. The default value
+      is 40.\\
+      \code{-P} \textit{number} & Set permission flags for PDF encryption.
+      The \textit{number} is a 32-bit unsigned integer representing permission
+      flags.
+      See, Table~\ref{TABLE:flags}. The default value is \code{0x003C}.\\
+      \hline
+  \end{tabular}
+  \caption{Command line options for encryption.}%
+  \label{TABLE:enc-options}
+\end{table}
+
+When \dvipdfmx\ is invoked with encryption via \code{-S} option,
+passwords will be asked.
+However, in some circumstances, it might be desirable to avoid being prompted for
+passwords. In that case, use the \code{pdf:encrypt} special to supply passwords in
+the \TeX\ file, as,
+\begin{lstlisting}
+  \special{pdf:encrypt userpw (foo) ownerpw (bar) length 128 perm 20}
+\end{lstlisting}
+Here, user and owner password are supplied as PDF string objects (\code{foo} and \code{bar}
+in the example above) which can be empty.
+
+Up to two passwords can be specified for a document -- an owner password and a user password.
+If a user attempts to open an encrypted document with user password being set, PDF application
+should prompt for a password. Users are allowed to access the contents of the document only when
+either password is correctly supplied.
 Depending on which password (user or owner) was supplied, additional operations
-allowed for an opened document is determined; full access for users who opened
-the document with the correct owner password or additional operations
-controlled by permission flags for users who opened the document with the
-correct user password.
+allowed for the opened document is determined; full access for users who opened
+with the correct owner password or additional operations
+controlled by permission flags for users who opened with the correct user password.
 
-Access permision flags can be specified via the \option{-P} option. Each bits
-of the (32-bit unsigned) integer number given to this option represents user
+Although PDF specification allows various character encodings other than \code{US-ASCII}
+for entering password, \dvipdfmx\ is unable to handle it properly.
+Thus it must be assumed that \code{US-ASCII} is used for password strings.
+
+Access permision flags can be specified via \option{-P} command-line option.
+Each bits of (32-bit unsigned) integer number given to this option represents user
 access permissions; e.g., bit position 3 for allowing ``print'', 4 for
-``modify'', 5 for ``copy or extract'', and so on. See,
-Table~\ref{TABLE:flags}.
-\begin{table}[b]
+``modify'', 5 for ``copy or extract'', and so on. See, Table~\ref{TABLE:flags}.
+For examples, \code{-P 0x34} allows printing, copying and extraction of text, and adding and
+modifying text annotation and filling in interactive form fields (but disallows
+modification of the contents of the document).
+\begin{table}
     \centering
     \begin{tabular}{lp{8.3cm}}\hline
         Bit Position & Meaning \\ \hline\hline
-        3 & Print the document. \\
-        4 & Modify the contents of the document. \\
+        3 & (Revision 2) Print the document. \\
+          & (Revision 3 or greater) Print the document. Print quality depending on bit 12.\\
+        4 & Modify the contents of the documentby operations other than those controlled
+            by bits 6, 9, and 11. \\
         5 & Copy or extract text and graphics from the document. \\
         6 & Add or modify text annotations, fill in interactive form fields.
             Creation and modification of interactive form field is also
             allowed if bit 4 is set.\\
+        9 & (Revision 3 or greater) Fill in existing interactive form fields
+            (including signature fields), even if bit 6 is clear.\\
+        10  & \em{Deprecated in PDF 2.0} \\
+            & (Revision 3 or greater) Extract text and graphics (in support of accessibility to
+              users with disabilities or for other purposes).\\
+        11  & (Revision 3 or greater) Assemble the document
+              (insert, rotate, or delete pages and create document outline items or thumbnail
+              images), even if bit 4 is clear.\\
+        12  & (Revision 3 or greater) High-quality printing.
+              When this bit is clear (and bit 3 is set), printing shall be limited to a low-level,
+              possibly of degraded quality.\\
         \hline
     \end{tabular}
-    \caption{Flag bits and their short explaination for the Revision 2
-     Standard Security Handler.}\label{TABLE:flags}
+    \caption{Flag bits and their short explaination.
+            Revision 2 is used when encryption key length is 40 bits or when PDF output
+            version is less than 1.5. Otherwise, Rivision 3 or greater is used.}\label{TABLE:flags}
 \end{table}
-For examples,
-\begin{lstlisting}
-dvipdfmx -S -P 0x34 foo.dvi
-\end{lstlisting}
-allows printing, copying and extraction of text, and adding and modifying
-text annotation and filling in interactive form fields (but disallows
-modification of the contents of the document).
 
 The \option{-K} option can be used to specify the encryption key length.
 The key length must be multiple of 8 in the range 40 to 128, or 256 (for PDF
-version 1.7 plus Adobe Extension or forthcoming PDF version 2.0). Please note
-that key length 256 requires Adobe's Extension to \lnum{PDF-1.7} and hence PDF
-applications may not support it.
-
-Password will be asked when encryption is enabled. It may not work well on
-Windows platforms. Use the \code{pdf:encrypt} special instead of command line
-options in this case.
+version 1.7 plus Adobe Extension or PDF version 2.0). Please note
+that when key length 256 is specified for PDF version 1.7 output, it requires
+Adobe's Extension to \lnum{PDF-1.7} and hence PDF applications may not support it.
+PDF version 1.4 is required for key length more than 40 bits. AES encryption algorithm requires
+PDF version 1.6.
 
 The default values for \option{K} is 40 and for \option{-P} is \code{0x003C0}
 (all bits from bit-position 3 to 6 set).
