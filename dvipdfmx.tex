@@ -356,7 +356,9 @@ are needed to enable those features. This section shortly describes about them.
 
 \subsection{PostScript CMap Resources}
 
-PostScript CMap Resources\footnote{See, ``\href{http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5014.CIDFont\_Spec.pdf}{Adobe CMap and CIDFont Files Specification}''}
+PostScript CMap Resources\footnote{See,
+``\href{http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5014.CIDFont\_Spec.pdf}%
+{Adobe CMap and CIDFont Files Specification}''}
 are required for supporting lagacy encodings such as Shift-JIS, EUC-JP, Big5,
 and other East Asian encodings. \dvipdfmx\ internally identifies glyphs with
 identifiers (CIDs\footnote{PostScript terminology ``Character IDentifier''.})
@@ -523,24 +525,44 @@ The \option{-D} option, as in \dvipdfm, can be used for filtering images.
 PNG and JPEG are supported as in \dvipdfm.
 
 PNG support includes most of important features of PNG format such as color
-palette, transparency, 16bit bit-depth color, embedded ICC Profiles, and
-calibrated colors specified by \code{gAMA} and \code{cHRM} chunks.
-XMP Metadata is also supported.
+palette, transparency, 16bit bit-depth color, embedded ICC Profiles,
+calibrated color, and embedded XMP Metadata.
 
-Predictor filter may be applied before compression, which results in better
-compression for larger images. \dvipdfmx\ supports TIFF Predictor 2 and PNG
-optimum filters. However, there are yet no way to specify which predictor
-function is to be used.
-Using predictor filters usually gives better compression for images
+For better compression ratio, a preprocessing filter (Predictor filter)
+might be applied before compression.
+\dvipdfmx\ supports TIFF Predictor 2 and PNG optimum filter.
+However, there are yet no way to specify which predictor function is to be used
+and currently PNG optimum filter is always employed.
+
+Predictor filter is preprocessing filter to image data for improving compression.
+Using a predictor filter usually gives better compression
 but there is a case that compression speed becomes significantly slower.
 Try \option{-C 0x20} command line option to disable predictor filters and to
 check if slowness is due to filtering.
+
 For PNG optimum filter, the ``minimum sum of absolute differences''
 heuristic approach is employed for finding the most optimal filter to be used.
-See, discussion on\medskip
+See, discussion on PNG Specification\cite{PNGSPEC}, ''Filter selection'':\medskip
 
-\url{http://www.w3.org/TR/PNG-Encoders.html\#E.Filter-selection}
+\url{http://www.w3.org/TR/2003/REC-PNG-20031110/\#12Filter-selection}
 \medskip
+
+As built-in support for the sRGB color space is absent in PDF,
+the sRGB color can only be represented precisely by means of sRGB ICC Profile.
+However, for sRGB color PNG images, \dvipdfmx\ uses an approximate calibrated
+RGB color space instead.
+For approximating the sRGB color, the gamma and CIE \lnum{1931} chromaticity values
+mentioned in PNG Specification is used.
+See, the following page for more information:\medskip
+
+\url{http://www.w3.org/TR/2003/REC-PNG-20031110/\#11sRGB}
+\medskip
+
+\dvipdfmx\ also supports calibrated color with PNG \code{gAMA} and \code{cHRM} chunk.
+Those PNG chunks carry information on more accurate color representation. 
+Some software programs write only \code{cHRM} but do not record the gamma value although
+PNG specification recommends to do so. Gamma value 2.2 is assumed if only \code{cHRM} is
+present but \code{gAMA} isn't.
 
 JPEG is relatively well supported. \dvipdfmx\ supports embedded ICC Profiles
 and CMYK color. Embedded XMP metadata is also supported.
@@ -887,7 +909,7 @@ To protect output PDF with encryption, use \code{pdf:encrypt} special
 pdf:encrypt userpw (foo) ownerpw (bar) length 128 perm 20
 \end{lstlisting}
 where user-password (\code{userpw}) and owner-password (\code{ownerpw}) must be
-specified as PDF string objects. (which can be empty)
+specified as PDF string object. (which can be empty)
 Numbers specifying key-length and permission flags here are decimal numbers.
 See, section ``\hyperref[SEC:encryption]{Encryption Support}'' for a brief
 description of permission flags.
@@ -1752,7 +1774,7 @@ supported.
 
 Encryption is enabled by \option{-S} command line option.
 \begin{lstlisting}
-  dvipdfmx -S -K 128 -P 0x20
+  dvipdfmx -S -K 128 -P 0x14
 \end{lstlisting}
 where \code{-K} and \code{-P} options are used to specify encryption key length and
 permission flags respectively, and are briefly explained in Table~\ref{TABLE:enc-options}.
@@ -1843,6 +1865,17 @@ Adobe's Extension to \lnum{PDF-1.7} and hence PDF applications may not support i
 PDF version 1.4 is required for key length more than 40 bits. AES encryption algorithm requires
 PDF version 1.6.
 
+To show some examples:\\
+128-bit AES encryption with print-only (high-quality) setting,
+\begin{lstlisting}
+  dvipdfmx -V 5 -S -K 128 -P 0x804 input.dvi
+\end{lstlisting}
+256-bit AES encryption with print (low-quality), adding and modifying text annotations
+allowed,
+\begin{lstlisting}
+  dvipdfmx -V 2.0 -S -K 256 -P 0x24 input.dvi
+\end{lstlisting}
+
 The default values for \option{K} is 40 and for \option{-P} is \code{0x003C0}
 (all bits from bit-position 3 to 6 set).
 
@@ -1902,7 +1935,8 @@ dropped. Simplified support for OpenType Layout was intorduced instead.
 %\renewcommand{\refname}{Further Reading}
 \renewcommand{\bibname}{Further Reading}
 \begin{thebibliography}{99}
-\bibitem{DVIPDFM}  ''\href{http://mirrors.ctan.org/dviware/dvipdfm/dvipdfm.pdf}{Dvipdfm User's Manual}'' written by Mark~A.~Wicks.
+\bibitem{DVIPDFM}  ''\href{http://mirrors.ctan.org/dviware/dvipdfm/dvipdfm.pdf}%
+{Dvipdfm User's Manual}'' written by Mark~A.~Wicks.
 \bibitem{ADOBE} Adobe's PDF References and a free copy of
 \lnum{ISO 32000-1:2008} standard are available from
 ``\href{http://www.adobe.com/devnet/pdf.html}{PDF Technology Center}''
@@ -1911,6 +1945,8 @@ on \href{http://www.adobe.com/devnet.html}{Adobe Developer Connection}.
 site:
 ``\href{http://www.microsoft.com/en-us/Typography/OpenTypeSpecification.aspx}%
 {OpenType Specification}''.
+\bibitem{PNGSPEC} ''\href{https://www.w3.org/TR/2003/REC-PNG-20031110/}%
+{Portable Network Graphics (PNG) Specification (Second Edition)}''.
 \bibitem{CHOF} An article regarding DVI specials: Jin-Hwan Cho,
 ``\href{http://www.tug.org/TUGboat/tb30-1/tb94cho.pdf}{DVI specials for PDF generation}'',
 TUGboat, 30(1):6-11, 2009.
