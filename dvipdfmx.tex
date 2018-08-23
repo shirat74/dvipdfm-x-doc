@@ -587,21 +587,22 @@ Table~\ref{TABLE:PNGfeat} for more details.
 
 \subsubsection{JPEG and \lnum{JPEG2000}}
 
-JPEG is also supported as in \dvipdfm. In addition, \lnum{JPEG2000} is also
-supported.
+JPEG format is supported as in \dvipdfm. In addition to this, \lnum{JPEG2000}
+is also supported.
 
-JPEG and \lnum{JPEG2000} image inclusion is basically ''pass-through'', that is,
-image data is not decompressed. So, although these formats are lossy, there
-should be no quality loss when including images.
+JPEG and \lnum{JPEG2000} image inclusion is basically done as ''pass-through'',
+that is, image data is not decompressed before inclusion. So, although these
+formats are basically lossy, there should be no quality loss when including
+images.
 
 JPEG is relatively well supported. \dvipdfmx\ supports embedded ICC Profiles
-and CMYK color. Embedded XMP metadata is also preserved.
-JFIF or Exif data is used to determin image's physical size.
+and CMYK color. Embedded XMP metadata is also preserved in the output PDF.
+JFIF or Exif data might be used to determin image's physical size.
 
 As PDF specification does not require information irrelevant to
 displaying images to be embedded, \dvipdfmx\ does not embedd whole data.
 Especially, not all application specific data is retained. Application 
-specific data such as JFIF, Exif, and \code{APP14} Adobe markers are
+specific data such as JFIF, Exif, and \code{APP14} Adobe marker are
 preserved.
 Please note that XMP and Exif data which may contain location information
 where the photo was taken is always preserved in the output PDF file.
@@ -621,8 +622,8 @@ However, tagged PDF may cause problems and annotations are not kept.
 As there are no clear way to determin the natural extent of the graphics content
 to be clipped, \dvipdfmx\ preferably try to find the \emph{crop box} to decide
 image size. If there are no crop box \emph{explicitly} specified,%
-\footnote{There are some accusations by Japanese \TeX\ users that
-''\dvipdfmx\ violates the PDF spec.'' regarding this point. However, what we are
+\footnote{There are some accusations by Japanese \TeX\ users as
+''violating the PDF spec.'' regarding this point. However, what we are
 talking here is about how to guess the \emph{natural} or \emph{intended} size of
 images but not about the default value of the PDF \code{CropBox} itself.} then it
 tries to refer other boundary boxes such as the \emph{art box}. If there are no
@@ -640,21 +641,20 @@ or \code{trimbox} for selecting page's boundary box to be used. For examples,
 \end{lstlisting}
 includes 3rd page of `foo.pdf' with the boundary box set to art box.
 
-\subsubsection{Additional Supported Formats}
+\subsubsection{Other Image Formats}
 
-For \MP\ generated PostScript files, multi-byte encoding support is added.
+For \MP\ generated Encapsulated PostScript (EPS) files, multi-byte encoding
+support is added.
 \dvipdfmx\ also supports ``\MP\ mode''. When \dvipdfmx\ is invoked with
 \option{-M} option, it enters in \MP\ mode and processes a \MP\
-generated EPS file as input.%
+generated EPS file as an input.%
 \footnote{\code{prologue} should be set to \code{2}.}
 
-BMP support is added. It is limited to uncompressed or RLE-compressed raster
-images. Extensions are not (won't be) supported.
+BMP support is also added. It is limited to uncompressed or RLE-compressed
+raster images. Extensions are not (won't be) supported.
 
-\subsubsection{Inclusion of Other Format Images}
-
-As in \dvipdfm, the \code{-D} option can be used to convert images to PDF
-format before inclusion.
+For image formats not natively supported, the \code{-D} option can be
+used to convert images to PDF format before inclusion, as in \dvipdfm.
 In \dvipdfmx, the letter \code{v} in the \code{-D} option argument is expanded
 to the output PDF version.
 
@@ -679,7 +679,8 @@ Default value is set to -2.
 
 \dvipdfmx\ does not offer a high level interface to draw graphics objects.
 A possible way to draw grahpics is to write raw PDF graphics drawing codes and
-then to insert them into the output via the \code{special} command.
+then to insert them into the output via \code{special} commands.
+
 To show an example, the following code:
 \begin{lstlisting}
 \special{pdf:content
@@ -696,9 +697,9 @@ draws a Bézier curve,
 The \code{pdf:content} special is used here which is useful for inserting an
 isolated graphics object.
 
-This illustrates a typical example of PDF graphics drawing. It consists of
-three parts; setting graphics state, constructing a path, and painting a path.
-A graphics object is specified as a sequence of operators and thier operands
+The above example illustrates a typical example of PDF graphics drawing.
+It consists of three parts; setting graphics state, constructing a path, and painting
+a path. A Graphic object are specified as a sequence of operators and thier operands
 using \emph{postfix notation}. \keyword{Graphics state operators} comes first,
 \code{cm} in this example sets the current transformation matrix (CTM). Then,
 \keyword{path construction} operators follow; move to position $(0, 100)$,
@@ -835,11 +836,11 @@ Talbe~\ref{TAB:operatorsGS}.
 
 \subsubsection{Path Construction Operators}
 
-Path construction normally start with a \code{m} operator which moves the
-current point to a specified position and then a sequence of other path
+Path construction normally starts with a \code{m} operator which moves the
+current point to the specified position and then a sequence of other path
 construction operators follows. The path currently under construction is
 called the \keyword{current path}. A sequence of path construction operators
-append segments of path to the current path and then move the
+appends segments of path to the current path and then move the
 \keyword{current point} to the end point of appended path.
 A typical sequence of path construction looks like,
 \begin{lstlisting}
@@ -916,7 +917,7 @@ two \code{re} operators.)
 \section{PDF Specials}\label{SEC:specials}
 
 Several \code{special} commnads are added for more flexible PDF generation:
-creation of arbitrary stream object, controlling \dvipdfmx\ behavior, and some
+creation of arbitrary stream objects, controlling \dvipdfmx\ behavior, and some
 specials which might be useful for graphics drawing.
 
 \subsection{Additions to PDF Specials}
@@ -946,6 +947,46 @@ object from a PDF string instead of a file.
 pdf:stream @identifier (stream contents) <<dictionary>>
 \end{lstlisting}
 
+This special might be useful for creating a simple image inline.
+\begin{lstlisting}
+\special{pdf:stream @myim01
+  <5500AAC05500AAC05500AAC05500AAC05500>
+  <<
+    /Type /XObject
+    /Subtype /Image
+    /BitsPerComponent 1
+    /ColorSpace /DeviceGray
+    /Width 9
+    /Height 9
+  >>
+}
+\special{pdf:put @resources <<
+  /XObject << /MyIM01 @myim01 >>
+>>}
+\special{pdf:content 81 0 0 81 0 0 cm /MyIM01 Do}
+\end{lstlisting}
+The above example draws an image like Figure~\ref{FIG:stream}.
+\begin{figure}
+  \centering
+  \makebox[81bp][l]{\raisebox{-81bp}[0bp][81bp]{%
+  \special{pdf:stream @myim01 <5500AAC05500AAC05500AAC05500AAC05500>
+  <<
+    /Type /XObject
+    /Subtype /Image
+    /BitsPerComponent 1
+    /ColorSpace /DeviceGray
+    /Width  9
+    /Height 9 
+  >>}
+  \special{pdf:put @resources <<
+    /XObject << /MyIM01 @myim01 >>
+  >>}
+  \special{pdf:content 81 0 0 81 0 0 cm /MyIM01 Do}
+}}
+\caption{An image created by \code{pdf:stream} special.}%
+\label{FIG:stream}
+\end{figure}
+
 \code{pdf:mapline} and \code{pdf:mapfile} specials can be used to append a
 fontmap entry or to load a fontmap file:
 \begin{lstlisting}
@@ -964,10 +1005,20 @@ To protect output PDF with encryption, use \code{pdf:encrypt} special
 pdf:encrypt userpw (foo) ownerpw (bar) length 128 perm 20
 \end{lstlisting}
 where user-password (\code{userpw}) and owner-password (\code{ownerpw}) must be
-specified as PDF string object. (which can be empty)
+specified as PDF string objects. (which can be empty)
 Numbers specifying key-length and permission flags here are decimal numbers.
 See, section ``\hyperref[SEC:encryption]{Encryption Support}'' for a brief
 description of permission flags.
+
+As a convenience, the \code{pageresources} special is added, which puts given page
+resources into subsequent page's page resource dictionary. For examples,
+\begin{lstlisting}
+\special{pdf:pageresources <<
+  /ExtGState << /MyGS01 << /ca 0.5 /CA 0.5 >> >>
+>>}
+\end{lstlisting}
+puts an ExtGState resource named \code{MyGS01} into the current page's and all
+subsequent pages' resource dictionary.
 
 Other notable extensions are \code{code}, \code{bcontent}, and
 \code{econtent}. The \code{code} special can be used to insert raw PDF graphics
@@ -996,6 +1047,33 @@ broken PDF files. The \code{bcontent} and \code{econtent} pair is somewhat
 fragile and might be incompatible to other groups of special commands.
 It may not always be guaranteed to work as `expected'.
 
+\subsection{ToUnicode Special}
+
+PDF allows users to add various information such as document information,
+annotation, and navigation information like bookmarks to their document.
+All human-readable text, \keyword{text string}, contained in such information must
+be encoded either in \keyword{PDFDocEncoding} or UTF-16BE with Unicode byte order
+marker.
+
+There is a special kind of special command, \code{pdf:tounicode}, which can be used
+to convert those text strings into the appropriate Unicode form.
+For examples,
+\begin{lstlisting}
+\special{pdf:tounicode 90ms-RKSJ-UCS2}
+\end{lstlisting}
+declares that \emph{some} text strings found in arguments to several PDF special
+commands, such as \code{docinfo} and \code{annot}, must be re-encoded.
+Note that not all PDF string objects are subject to this conversion.
+Only dictionary entries listed below are converted according to the selected conversion
+CMap.
+\begin{lstlisting}
+Title Author Subject Keywords Creator Producer Contents Subj
+TU T TM 
+\end{lstlisting}
+
+Please note that this feature is provided just as a remedy for users who cannot prepare
+their document with appropriate text string encoding.
+
 \subsection{Summary of PDF Specials}
 
 Please refer to the ``Dvipdfm User's Manual''.\cite{DVIPDFM}
@@ -1018,7 +1096,7 @@ comment. This feature is supported by many PDF viewer applications.
      /Type     /Annot
      /Subtype  /Text
      /Name     /Comment
-     /T        (Author of This Document)
+     /T        (Text Annotation Example)
      /Subj     (An Example of Text Annotations)
      /Contents (A Quick Brown Fox Jumped Over The Lazy Dog.)
   >>
@@ -1030,7 +1108,7 @@ comment. This feature is supported by many PDF viewer applications.
      /Type     /Annot
      /Subtype  /Text
      /Name     /Comment
-     /T        (Author of This Document)
+     /T        (Text Annotation Example)
      /Subj     (An Example of Text Annotations)
      /Contents (A Quick Brown Fox Jumped Over The Lazy Dog.)
   >>
@@ -1122,7 +1200,7 @@ object named \code{SourceFile}, and then creates file attachment annotation.
           >>
       /Name     /PushPin
       /C        [0.8 0.2 0.2]
-      /T        (The dvipdfmx project team)
+      /T        (The Dvipdfmx User's Manual)
       /Subj     (The Dvipdmfx User's Manual)
       /Contents (XeLaTeX source file of this manual.)
    >>
@@ -1140,7 +1218,7 @@ object named \code{SourceFile}, and then creates file attachment annotation.
           >>
       /Name     /PushPin
       /C        [0.8 0.2 0.2]
-      /T        (The dvipdfmx project team)
+      /T        (The Dvipdfmx User's Manual)
       /Subj     (The Dvipdfmx User's Manual)
       /Contents (XeLaTeX source file of the manual.)
    >>
