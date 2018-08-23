@@ -498,10 +498,10 @@ object stream introduced in \lnum{PDF-1.5} are also supported.
 \section{Image Inclusion}
 
 The basics of incorporating images into output PDF is the same as in \dvipdfm.
-\LaTeX\ users can simply use the \package{graphicx} package (possibly with the
-driver option \code{dvipdfmx}) to do this. This section is \emph{not} for
-providing a how-to guide to include images but just for supported graphics and
-image formats along with supported features.
+To do this, \LaTeX\ users can simply use the \package{graphicx} package.
+(possibly with the driver option \code{dvipdfmx})
+This section is \emph{not} for providing a how-to guide to include images but
+just for supported graphics and image formats along with supported features.
 
 Graphics support was mostly rewritten in \dvipdfmx.
 Support for BMP and JPEG\lnum{2000} was added. An effort to preserve more
@@ -517,32 +517,34 @@ in image manipulation for preparation of images.
 
 Supported formats are, PNG, JPEG, \lnum{JPEG2000}, BMP, PDF, and \MP\ generated
 EPS. All other format images, such as SVG and PostScript, must be converted to
-other format supported by \dvipdfmx\ before inclusion.
-The \option{-D} option, as in \dvipdfm, can be used for filtering images.
+PDF before inclusion. The \option{-D} option, as in \dvipdfm, can be used for
+filtering images.
 
-\subsubsection{PNG and JPEG}
+\subsubsection{Notes on PNG Support}
 
-PNG and JPEG are supported as in \dvipdfm.
+PNG is supported as in \dvipdfm\ with many improvements.
 
 PNG support includes most of important features of PNG format such as color
-palette, transparency, 16bit bit-depth color, embedded ICC Profiles,
+palette, transparency, 16-bit bit-depth color, embedded ICC Profiles,
 calibrated color, and embedded XMP Metadata.
 
-For better compression ratio, a preprocessing filter (Predictor filter)
-might be applied before compression.
+In including PNG images, \dvipdfmx\ first decompresses image data and then
+compresses (if requested) it again.
+For better compression ratio, a preprocessing filter (Predictor filter) might
+be applied before compression.
 \dvipdfmx\ supports TIFF Predictor 2 and PNG optimum filter.
-However, there are yet no way to specify which predictor function is to be used
+However, there is yet no way to specify which predictor function is to be used
 and currently PNG optimum filter is always employed.
 
 Predictor filter is preprocessing filter to image data for improving compression.
 Using a predictor filter usually gives better compression
-but there is a case that compression speed becomes significantly slower.
+but in many cases compression speed becomes significantly slower.
 Try \option{-C 0x20} command line option to disable predictor filters and to
 check if slowness is due to filtering.
 
 For PNG optimum filter, the ``minimum sum of absolute differences''
 heuristic approach is employed for finding the most optimal filter to be used.
-See, discussion on PNG Specification\cite{PNGSPEC}, ''Filter selection'':\medskip
+See, discussion in the PNG Specification ''Filter selection'':\medskip
 
 \url{http://www.w3.org/TR/2003/REC-PNG-20031110/\#12Filter-selection}
 \medskip
@@ -552,7 +554,7 @@ the sRGB color can only be represented precisely by means of sRGB ICC Profile.
 However, for sRGB color PNG images, \dvipdfmx\ uses an approximate calibrated
 RGB color space instead.
 For approximating the sRGB color, the gamma and CIE \lnum{1931} chromaticity values
-mentioned in PNG Specification is used.
+mentioned in the PNG Specification is used.
 See, the following page for more information:\medskip
 
 \url{http://www.w3.org/TR/2003/REC-PNG-20031110/\#11sRGB}
@@ -560,21 +562,73 @@ See, the following page for more information:\medskip
 
 \dvipdfmx\ also supports calibrated color with PNG \code{gAMA} and \code{cHRM} chunk.
 Those PNG chunks carry information on more accurate color representation. 
-Some software programs write only \code{cHRM} but do not record the gamma value although
-PNG specification recommends to do so. Gamma value 2.2 is assumed if only \code{cHRM} is
-present but \code{gAMA} isn't.
+Some software programs, however, write only \code{cHRM} but do not record the gamma value
+although the PNG specification recommends to do so. Gamma value 2.2 is assumed if only
+\code{cHRM} is present but \code{gAMA} is not.
+
+Some PNG features are unavailable depending on output PDF version setting. Please refer
+Table~\ref{TABLE:PNGfeat} for more details.
+
+\begin{table}
+  \centering
+  \begin{tabular}{lp{8cm}}\hline
+      Feature & PDF Version Required \\ \hline\hline
+      16-bit Color Depth & Version 1.5 \\
+      Transparency & Full support for alpha channel requires PDF version 1.4.
+        Color key masking (a specific color is treated as fully transparent)
+        requires 1.3.\\
+      XMP Metadata & Version 1.4 \\
+      ICC Profile & Version 1.3 \\
+      \hline
+  \end{tabular}
+  \caption{PNG features and corresponding PDF versions required.}%
+  \label{TABLE:PNGfeat}
+\end{table}
+
+\subsubsection{JPEG and \lnum{JPEG2000}}
+
+JPEG is also supported as in \dvipdfm. In addition, \lnum{JPEG2000} is also
+supported.
+
+JPEG and \lnum{JPEG2000} image inclusion is basically ''pass-through'', that is,
+image data is not decompressed. So, although these formats are lossy, there
+should be no quality loss when including images.
 
 JPEG is relatively well supported. \dvipdfmx\ supports embedded ICC Profiles
-and CMYK color. Embedded XMP metadata is also supported.
+and CMYK color. Embedded XMP metadata is also preserved.
 JFIF or Exif data is used to determin image's physical size.
 
-\subsubsection{PDF and ``MPS''}
+As PDF specification does not require information irrelevant to
+displaying images to be embedded, \dvipdfmx\ does not embedd whole data.
+Especially, not all application specific data is retained. Application 
+specific data such as JFIF, Exif, and \code{APP14} Adobe markers are
+preserved.
+Please note that XMP and Exif data which may contain location information
+where the photo was taken is always preserved in the output PDF file.
+
+\lnum{JPEG2000} is also supported. It is restricted to JP2 and JPX baseline
+subset as required by the PDF specification. It is not well supported and still in
+an experimental stage. J2C format and transparency are not supported.
+
+\subsubsection{PDF Support}
 
 PDF inclusion is supported as in \dvipdfm, with various important enhancement
-over \dvipdfm\ for robust inclusion. \dvipdfmx\ can handle cross-reference
+over \dvipdfm\ for more robust inclusion. \dvipdfmx\ can handle cross-reference
 streams and object streams introduced in \lnum{PDF-1.5}.
 \dvipdfmx\ also supports inclusion of PDF pages other than the first page.
 However, tagged PDF may cause problems and annotations are not kept.
+
+As there are no clear way to determin the natural extent of the graphics content
+to be clipped, \dvipdfmx\ preferably try to find the \emph{crop box} to decide
+image size. If there are no crop box \emph{explicitly} specified,%
+\footnote{There are some accusations by Japanese \TeX\ users that
+''\dvipdfmx\ violates the PDF spec.'' regarding this point. However, what we are
+talking here is about how to guess the \emph{natural} or \emph{intended} size of
+images but not about the default value of the PDF \code{CropBox} itself.} then it
+tries to refer other boundary boxes such as the \emph{art box}. If there are no
+possible boundaries of the graphics content explicitly specified, the \emph{media box},
+which is the boundaries of the physical medium on which the page is to be printed,
+is used as the last resort.
 
 The \code{pdf:image} special supports additional keys, ``\code{page}'' and
 ``\code{pagebox}''. The \code{page} key takes an integer value representing
@@ -584,24 +638,25 @@ or \code{trimbox} for selecting page's boundary box to be used. For examples,
 \begin{lstlisting}
 \special{pdf:image pagebox artbox page 3 (foo.pdf)}
 \end{lstlisting}
-includes 3rd page of `foo.pdf' with boundary box set to \code{ArtBox}.
-
-
-For \MP\ generated EPS files, multi-byte encoding support is added.
-\dvipdfmx\ also supports ``\MP\ mode''. When \dvipdfmx\ is invoked with
-\option{-M} option, it enters in \MP\ mode and processes a \MP\
-generated EPS file as input.%
-\footnote{\code{prologue} must be set to \code{2}.}
+includes 3rd page of `foo.pdf' with the boundary box set to art box.
 
 \subsubsection{Additional Supported Formats}
 
-BMP is supported but limited to uncompressed or RLE-compressed raster
+For \MP\ generated PostScript files, multi-byte encoding support is added.
+\dvipdfmx\ also supports ``\MP\ mode''. When \dvipdfmx\ is invoked with
+\option{-M} option, it enters in \MP\ mode and processes a \MP\
+generated EPS file as input.%
+\footnote{\code{prologue} should be set to \code{2}.}
+
+BMP support is added. It is limited to uncompressed or RLE-compressed raster
 images. Extensions are not (won't be) supported.
 
-\lnum{JPEG2000} is also supported. It is restricted to JP2 and JPX baseline
-subset as required by PDF spec. It is not well supported and still in
-an experimental stage. J2C format and transparency are not supported.
+\subsubsection{Inclusion of Other Format Images}
 
+As in \dvipdfm, the \code{-D} option can be used to convert images to PDF
+format before inclusion.
+In \dvipdfmx, the letter \code{v} in the \code{-D} option argument is expanded
+to the output PDF version.
 
 \subsection{Image Cache}
 
