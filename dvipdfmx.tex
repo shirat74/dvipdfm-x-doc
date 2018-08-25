@@ -94,7 +94,7 @@
 %\lhead{}
 \title{The \dvipdfmx\ User's Manual}
 \author{The \dvipdfmx\ project team}
-\date{May 7, 2017}
+\date{August 25, 2018}
 %%DVIPDFMX SETTINGS
 \AtBeginDocument{%
   \special{dvipdfmx:config O 1}%
@@ -209,7 +209,8 @@ Please refer the
 available from the CTAN site mentioned above for basic usage.
 
 Some additional command line options recognized by \dvipdfmx\ are listed in
-Table~\ref{TABLE:options}. Try
+Table~\ref{TABLE:options}. In addition to this, the \code{-V} option for specifying
+the output PDF version now accepts the verion specification of a form \code{2.0}. Try
 \begin{lstlisting}
 dvipdfmx --help
 \end{lstlisting}
@@ -253,19 +254,19 @@ p\TeX, and up\TeX.
 This section is intended to be a quick guide for each users.
 
 \subsection{\texorpdfstring{\XeTeX}{XeTeX}}
-For \XeTeX\ users, most part of this document is irrelevant except section of
+For \XeTeX\ users, most part of this document is irrelevant except the section of
 ``\hyperref[SEC:graphics]{Graphics and Image Formats}'' and
 ``\hyperref[SEC:specials]{DVI Specials}''.
 
 \subsection{p\TeX}
 p\TeX\ users are at least required to install several auxilially files
 mentioned in the section of ``\hyperref[SEC:auxfiles]{Auxilially Files}''
-and to setup fontmappings. Just install the \package{adobemappings} and
+and to setup font-mappings. Just install the \package{adobemappings} and
 \package{glyphlist} for auxilially files. (As \TeX\ Live basic intallation
 requires them, they are probably already installed for \TeX\ Live users.)
 
 Setting up fontmaps can be done easily with help of the \package{ptex-fontmaps}
-package. For examples, to use with IPA fonts (contained
+package. For example, to use with IPA fonts (contained
 in the \package{ipaex} package), run,
 \begin{lstlisting}
 updmap ipaex
@@ -287,7 +288,7 @@ the following \code{special} command,
 \AtBeginDocument{\special{pdf:tounicode 90ms-RKSJ-UCS2}}
 \end{lstlisting}
 in the preamble.
-The above \code{special} command instructs \dvipdfmx\ to convert text encoded
+The above \code{special} command instruct let \dvipdfmx\ to convert text encoded
 in Shift-JIS to Unicode. For EUC-JP, replace 90ms-RKJK-UCS2 with EUC-UCS2.
 
 \subsection{up\TeX}
@@ -295,9 +296,9 @@ up\TeX\ users are basically the same as p\TeX\ users but there are two choices
 for setting fontmaps. Setup fontmaps as mentioned in the above for p\TeX, or use
 keyword \code{unicode} in the encoding field of fontmap files.
 
-The former case might be easier as auto-creation of fontmap files can be done
+The former might be easier as the auto-creation of fontmap files can be done
 with the \code{updmap} program and the \package{ptex-fontmaps} package. But in
-this method there are some difficulties when using fonts which employ character
+this method there are some difficulties when using a font which employs a character
 collection (glyph repertoire) other than Adobe-Japan1 in the case of PostScript
 flvavored OpenType fonts.
 In the later case, the \package{adobemappings} package is not reuiqred
@@ -307,7 +308,8 @@ can be used too.
 Using \code{unicode} is more simpler and intuitive thus it is recommended to
 use this method.\footnote{For \TeX\ Live 2017. Earlier versions have buggy
 support.}
-Typical example fontmap entries for using Adobe's SouceHan fonts look like:
+A typical example fontmap entries for using Adobe's SouceHan series
+might look like:
 \begin{lstlisting}
 urml    unicode  SourceHanSerifJP-Light.otf
 urmlv   unicode  SourceHanSerifJP-Light.otf  -w 1
@@ -315,8 +317,8 @@ ugbm    unicode  SourceHanSansJP-Medium.otf
 ugbmv   unicode  SourceHanSansJP-Medium.otf  -w 1
 \end{lstlisting}
 
-As in p\TeX, the following \code{special} instruction is necessary to PDF
-document information and annotations to  be shown correctly:
+As in p\TeX, the following \code{special} instruction might be necessary to PDF
+document information and annotations to be shown correctly:
 \begin{lstlisting}
 \AtBeginDocument{\special{pdf:tounicode UTF8-UCS2}}
 \end{lstlisting}
@@ -324,8 +326,8 @@ Here, input encodig is assumed to be UTF-8.
 
 \subsection{CJK-\LaTeX}
 
-CJK-\LaTeX\ users are required to have Subfont Definition Files to be installed.
-They are available as part of the \package{ttfutils} package.
+CJK-\LaTeX\ users are required to have \keyword{Subfont Definition Files}
+to be installed. They are available as part of the \package{ttfutils} package.
 
 To use TrueType Ariphic fonts provided by the \package{arphic-ttf} package:
 \begin{lstlisting}
@@ -342,24 +344,24 @@ To use TrueType Ariphic fonts provided by the \package{arphic-ttf} package:
 \end{CJK}
 \end{document}
 \end{lstlisting}
-Here, \code{pdf:mapline} special is used to setup fontmappings.
+Here, \code{pdf:mapline} special is used to setup font-mapping.
 
 \section{Auxiliary Files}\label{SEC:auxfiles}
 
 This section is mostly for supporting legacy encodings and legacy font format
 such as PostScript Type1 font. \XeTeX\ users may skip this section.
 
-\dvipdfmx\ has a capability to handle various input encodings from 7-bit
+\dvipdfmx\ has a capacity to handle various input encodings from 7-bit
 encodings to variable-width multi-byte encodings. It also has some sort of
 Unicode support. Several auxiliary files which are not common to \TeX\ users
 are needed to enable those features. This section shortly describes about them.
 
 \subsection{PostScript CMap Resources}
 
-PostScript CMap Resources\footnote{See,
+\keyword{PostScript CMap Resources}\footnote{See,
 ``\href{http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5014.CIDFont\_Spec.pdf}%
 {Adobe CMap and CIDFont Files Specification}''}
-are required for supporting lagacy encodings such as Shift-JIS, EUC-JP, Big5,
+are required for supporting lagacy encodings such as Shift-JIS, EUC-JP, \lnum{Big5},
 and other East Asian encodings. \dvipdfmx\ internally identifies glyphs with
 identifiers (CIDs\footnote{PostScript terminology ``Character IDentifier''.})
 represented as an integer ranging from 0 to 65535 in the CID-based glyph access.
@@ -532,17 +534,17 @@ In including PNG images, \dvipdfmx\ first decompresses image data and then
 compresses (if requested) it again.
 For better compression ratio, a preprocessing filter (Predictor filter) might
 be applied before compression.
-\dvipdfmx\ supports TIFF Predictor 2 and PNG optimum filter.
+\dvipdfmx\ supports the TIFF Predictor 2 and the PNG optimum filter.
 However, there is yet no way to specify which predictor function is to be used
 and currently PNG optimum filter is always employed.
 
-Predictor filter is preprocessing filter to image data for improving compression.
+Predictor filter is a preprocessing filter to image data for improving compression.
 Using a predictor filter usually gives better compression
 but in many cases compression speed becomes significantly slower.
 Try \option{-C 0x20} command line option to disable predictor filters and to
 check if slowness is due to filtering.
 
-For PNG optimum filter, the ``minimum sum of absolute differences''
+For the PNG optimum filter, the ``minimum sum of absolute differences''
 heuristic approach is employed for finding the most optimal filter to be used.
 See, discussion in the PNG Specification ''Filter selection'':\medskip
 
@@ -550,7 +552,7 @@ See, discussion in the PNG Specification ''Filter selection'':\medskip
 \medskip
 
 As built-in support for the sRGB color space is absent in PDF,
-the sRGB color can only be represented precisely by means of sRGB ICC Profile.
+the sRGB color can only be represented precisely by means of the sRGB ICC Profile.
 However, for sRGB color PNG images, \dvipdfmx\ uses an approximate calibrated
 RGB color space instead.
 For approximating the sRGB color, the gamma and CIE \lnum{1931} chromaticity values
@@ -560,7 +562,7 @@ See, the following page for more information:\medskip
 \url{http://www.w3.org/TR/2003/REC-PNG-20031110/\#11sRGB}
 \medskip
 
-\dvipdfmx\ also supports calibrated color with PNG \code{gAMA} and \code{cHRM} chunk.
+\dvipdfmx\ also supports calibrated color with the \code{gAMA} and the \code{cHRM} chunk.
 Those PNG chunks carry information on more accurate color representation. 
 Some software programs, however, write only \code{cHRM} but do not record the gamma value
 although the PNG specification recommends to do so. Gamma value 2.2 is assumed if only
@@ -599,7 +601,7 @@ JPEG is relatively well supported. \dvipdfmx\ supports embedded ICC Profiles
 and CMYK color. Embedded XMP metadata is also preserved in the output PDF.
 JFIF or Exif data might be used to determin image's physical size.
 
-As PDF specification does not require information irrelevant to
+As the PDF specification does not require information irrelevant to
 displaying images to be embedded, \dvipdfmx\ does not embedd whole data.
 Especially, not all application specific data is retained. Application 
 specific data such as JFIF, Exif, and \code{APP14} Adobe marker are
@@ -624,8 +626,8 @@ to be clipped, \dvipdfmx\ preferably try to find the \emph{crop box} to decide
 image size. If there are no crop box \emph{explicitly} specified,%
 \footnote{There are some accusations by Japanese \TeX\ users as
 ''violating the PDF spec.'' regarding this point. However, what we are
-talking here is about how to guess the \emph{natural} or \emph{intended} size of
-images but not about the default value of the PDF \code{CropBox} itself.} then it
+talking about it how to guess the \emph{natural} or \emph{intended} size of
+images but not the default value of the PDF crop box itself.} then it
 tries to refer other boundary boxes such as the \emph{art box}. If there are no
 possible boundaries of the graphics content explicitly specified, the \emph{media box},
 which is the boundaries of the physical medium on which the page is to be printed,
@@ -635,7 +637,7 @@ The \code{pdf:image} special supports additional keys, ``\code{page}'' and
 ``\code{pagebox}''. The \code{page} key takes an integer value representing
 the page number of PDF page to be included, and the \code{pagebox} takes one
 of the keywords \code{mediabox}, \code{cropbox}, \code{artbox}, \code{bleedbox},
-or \code{trimbox} for selecting page's boundary box to be used. For examples,
+or \code{trimbox} for selecting page's boundary box to be used. For example,
 \begin{lstlisting}
 \special{pdf:image pagebox artbox page 3 (foo.pdf)}
 \end{lstlisting}
@@ -715,7 +717,7 @@ The \code{pdf:content} special can be used for drawing an \emph{isolated}
 graphics object. It sets the origin of graphics drawing operators supplied to
 this command to the position where it is inserted.
 The whole content is enclosed by a pair of graphics state save-restore
-operators. So for examples, a color change made within a \code{pdf:content}
+operators. So for example, a color change made within a \code{pdf:content}
 command takes an effect only within the content of this special.
 
 \subsection{Guide to PDF Graphics Operators}
@@ -768,10 +770,10 @@ where the \code{B} operator fill and then stroke the path.
 1 0.4 0 0 K 1 0 0 0 k 0 0 100 50 re B}
 \end{center}
 
-A dash pattern can be specified with \code{d} operator.
+A dash pattern can be specified with the \code{d} operator.
 Operands for this operator are the \keyword{dash array} and
 the \keyword{dash phase}.
-For examples, to specify a dash pattern with 6-on 4-off starting with phase 0:
+For example, to specify a dash pattern with 6-on 4-off starting with phase 0:
 \begin{lstlisting}
 [6 4] 0 d 2 w 0 0 m 320 0 l S
 \end{lstlisting}
@@ -793,8 +795,8 @@ Q
 0 -2 m 0 96 l S
 \end{lstlisting}
 In the above example, \code{d}, \code{w}, and rotation only take effect within
-the \code{q}-\code{Q} block. The portion drawing two straight lines is
-unaffected.
+the \code{q}-\code{Q} block. The portion drawing two straight lines is unaffected
+by these graphics state change.
 \begin{center}
 \specialbox{120bp}{96bp}{pdf:content
 1 0 0 1 30 2 cm
@@ -836,9 +838,9 @@ Talbe~\ref{TAB:operatorsGS}.
 
 \subsubsection{Path Construction Operators}
 
-Path construction normally starts with a \code{m} operator which moves the
-current point to the specified position and then a sequence of other path
-construction operators follows. The path currently under construction is
+A path construction normally starts with a \code{m} operator which moves the
+current point to the specified position and then sequences of other path
+construction operators follow. The path currently under construction is
 called the \keyword{current path}. A sequence of path construction operators
 appends segments of path to the current path and then move the
 \keyword{current point} to the end point of appended path.
@@ -864,7 +866,7 @@ This example is an approximated circle drawn by four Bézier curves.
 
 Table~\ref{TAB:operators} shows a list of path construction operators.
 Those who are accustomed to the PostScript language should note that in PDF
-the current path is not part of the graphics state,
+the current path is not a part of the graphics state,
 and hece is \emph{not} saved and restored along with the other graphics state
 parameters.
 
@@ -874,16 +876,21 @@ parameters.
       Operands & Operator & Description \\ \hline\hline
       $x$ $y$ & \code{m} & Begin a new path by moving the current point specified by given operands.\\
       $x$ $y$ & \code{l} & Append a line segment from the current point to the point specified.\\
-      $x_1$ $y_1$ $x_2$ $y_2$ $x_3$ $y_3$ & \code{c} & Append a Bézier curve to the current path. Two Control points and the end point given as operands.\\
-      $x_2$ $y_2$ $x_3$ $y_3$ & \code{v} & Append a Bézier curve to the current path. Using the current point and first two operand as the Bézier control points.\\
+      $x_1$ $y_1$ $x_2$ $y_2$ $x_3$ $y_3$ & \code{c} & Append a Bézier curve to the current path.
+        Two Control points and the end point given as operands.\\
+      $x_2$ $y_2$ $x_3$ $y_3$ & \code{v} & Append a Bézier curve to the current path. Using the current
+        point and first two operand as the Bézier control points.\\
       $x_1$ $y_1$ $x_3$ $y_3$ & \code{y} & Append a Bézier curve to the current path. The second
       control point coincides with the end point.\\
-      --- & \code{h} & Close the current path by appending a straight line segment from the current point to the starting point of the path.\\
-      $x$ $y$ \textit{width} \textit{height} & \code{re} & Append a rectangle. First two operands for the position of lower-left corner, third and forth operand representing width and
+      --- & \code{h} & Close the current path by appending a straight line segment from the current point
+        to the starting point of the path.\\
+      $x$ $y$ \textit{width} \textit{height} & \code{re} & Append a rectangle. First two operands for the
+        position of lower-left corner, third and forth operand representing width and
       height.\\
       \hline
     \end{tabular}
-    \caption{List of path construction operators. All operators move the current point to the end point of appended path.}\label{TAB:operators}
+    \caption{List of path construction operators. All operators move the current point to the end
+      point of appended path.}\label{TAB:operators}
 \end{table}
 
 \subsubsection{Path Painting Operators}
@@ -916,11 +923,17 @@ two \code{re} operators.)
 
 \section{PDF Specials}\label{SEC:specials}
 
+\dvipdfmx\ recognizes various special commands originally introduced in
+\dvipdfm. Please refer to the ``Dvipdfm User's Manual''\cite{DVIPDFM} for detailed
+information on PDF specials.
+
+\subsection{Additions to PDF Specials}
+
 Several \code{special} commnads are added for more flexible PDF generation:
 creation of arbitrary stream objects, controlling \dvipdfmx\ behavior, and some
 specials which might be useful for graphics drawing.
 
-\subsection{Additions to PDF Specials}
+\subsubsection{PDF Object Manipulation}
 
 PDF object manipulation is a key feature of PDF specials.
 The \code{pdf:fstream} special is added in \dvipdfmx\ which enables creation of
@@ -932,7 +945,7 @@ where identifier and filename (specified as a PDF string object) are
 mandatory and a dictionary object, following the filename, which is to be added
 to the stream dictionary is optional.
 
-For examples, to incorporate a XMP Metadata,
+For example, to incorporate XMP Metadata stored from the file \code{test.xmp},
 \begin{lstlisting}
 \special{pdf:fstream @xmp (test.xmp) <<
     /Type    /Metadata
@@ -987,6 +1000,8 @@ The above example draws an image like Figure~\ref{FIG:stream}.
 \label{FIG:stream}
 \end{figure}
 
+\subsubsection{Controlling Font Mappings}
+
 \code{pdf:mapline} and \code{pdf:mapfile} specials can be used to append a
 fontmap entry or to load a fontmap file:
 \begin{lstlisting}
@@ -994,11 +1009,15 @@ pdf:mapline foo unicode bar
 pdf:mapfile foo.map
 \end{lstlisting}
 
+\subsubsection{Specifying The Output PDF Version}
+
 \code{pdf:majorversion} and \code{pdf:minorversion} specials can be used to
 specify major and minor version of output PDF.
 \begin{lstlisting}
 pdf:minorversion 3
 \end{lstlisting}
+
+\subsubsection{Encryption}
 
 To protect output PDF with encryption, use \code{pdf:encrypt} special
 \begin{lstlisting}
@@ -1010,8 +1029,12 @@ Numbers specifying key-length and permission flags here are decimal numbers.
 See, section ``\hyperref[SEC:encryption]{Encryption Support}'' for a brief
 description of permission flags.
 
+\subsubsection{PDF Document Creation}
+
+\newfeature{Addition in \TeX\ Live 2019}
+
 As a convenience, the \code{pageresources} special is added, which puts given page
-resources into subsequent page's page resource dictionary. For examples,
+resources into subsequent page's \keyword{Resource Dictionary}. For example,
 \begin{lstlisting}
 \special{pdf:pageresources <<
   /ExtGState << /MyGS01 << /ca 0.5 /CA 0.5 >> >>
@@ -1049,48 +1072,61 @@ It may not always be guaranteed to work as `expected'.
 
 \subsection{ToUnicode Special}
 
-PDF allows users to add various information such as document information,
-annotation, and navigation information like bookmarks to their document.
+PDF allows users to attach various additional information such as document information,
+annotation, and navigation information (like bookmarks) to their document.
 All human-readable text, \keyword{text string}, contained in such information must
 be encoded either in \keyword{PDFDocEncoding} or UTF-16BE with Unicode byte order
-marker.
+marker. However, as many users can't prepare their document with text strings
+properly encoded, there is a special kind of special command, \code{pdf:tounicode},
+which can be used to convert text strings into the appropriate Unicode form.
+Note that this feature is provided just as a remedy for users incapable of encoding
+text strings properly.
 
-There is a special kind of special command, \code{pdf:tounicode}, which can be used
-to convert those text strings into the appropriate Unicode form.
-For examples,
+For example,
 \begin{lstlisting}
 \special{pdf:tounicode 90ms-RKSJ-UCS2}
 \end{lstlisting}
-declares that \emph{some} text strings found in arguments to several PDF special
-commands, such as \code{docinfo} and \code{annot}, must be re-encoded.
-Note that not all PDF string objects are subject to this conversion.
-Only dictionary entries listed below are converted according to the selected conversion
-CMap.
+declares that \emph{some} of text strings should be re-encoded according to specified
+conversion CMap \code{90ms-RKSJ-UCS2}.
+
+Conversion is done only for arguments to several PDF special commands such as
+\code{docinfo}, \code{ann}, and \code{out} but not for that of general object creation
+specials. Note that not all PDF string objects are subject to this conversion.
+By default, only dictionary entries listed below are converted.
 \begin{lstlisting}
 Title Author Subject Keywords Creator Producer Contents Subj
 TU T TM 
 \end{lstlisting}
 
-Please note that this feature is provided just as a remedy for users who cannot prepare
-their document with appropriate text string encoding.
+\newfeature{Addition in \TeX\ Live 2019}
 
-\subsection{Summary of PDF Specials}
+The list of dictionary entries subect to conversion can be extended by supplying
+additional dictionary keys as an array object:
+\begin{lstlisting}
+  \special{pdf:tounicode 90ms-RKSJ-UCS2 [/RC /DS]}
+\end{lstlisting} 
 
-Please refer to the ``Dvipdfm User's Manual''.\cite{DVIPDFM}
+If the name of conversion CMap contains one of the keywords RKSJ, \lnum{B5}, GBK, and KSC,
+PDF string objects are treated specially when they are parsed. A two byte sequence
+starting with the first byte's hight bit set is treated ''as is'' so that
+the \code{0x5c} byte appears in the second byte is not treated as an escape sequence.
+This behavior is not complaiant to the PDF specification.
 
 \subsection{PDF Special Examples}
 
-This section is intended to be a hint for advanced users.
-Uninterested users can safely skip this section.
+This section shows several examples of special command usage.
+It is intended to be a hint for advanced users, so uninterested users can safely skip
+this section. In many cases, using \dvipdfmx\ PDF specials requires knowledge on PDF.
+Please refer to Adobe's ''PDF Reference''\cite{ADOBE}.
 
 \subsubsection{Annotations}
 
 In this section, some useful special commands for creating \keyword{annotations}
 are explained. Note that viewer support is required for annotations to be
-shown correctly.
+displayed correctly.
 
-First start with a very simple \keyword{Text Annotation} for attaching a
-comment. This feature is supported by many PDF viewer applications.
+First start with a very simple \keyword{Text Annotation} for attaching a comment.
+This feature is supported by many PDF viewer applications.
 \marginnote{\special{pdf:ann width 20bp height 20bp
   <<
      /Type     /Annot
@@ -1114,9 +1150,13 @@ comment. This feature is supported by many PDF viewer applications.
   >>
 }
 \end{lstlisting}
-\code{pdf:ann} special is used to create an annotation.
+\code{pdf:ann} special is used to create an annotation. A small icon shall
+be shown on the side margin. Here, dictionary entry \code{T} is for the tilte,
+\code{Subj} for the subject of this annotation, and \code{Contents} for
+the text string to be shown in the body of this annotation.
 
-Likewise, \keyword{Rubber Stamp Annotation},
+Likewise, \keyword{Rubber Stamp Annotation}, which places a rubber stamp
+like figure,
 \begin{center}
 \specialbox{150bp}{50bp}{pdf:ann width 150bp height 50bp
   <<
@@ -1139,9 +1179,9 @@ Likewise, \keyword{Rubber Stamp Annotation},
 Other keywords such as \code{Expired}, \code{Final}, \code{Draft}, and so on,
 can be used in place of \code{Approved}.
 
-One can create thier own stamps. For this purpose, specials
+One can create stamps of thier own style. For this purpose, other specials
 \code{pdf:bxobj} and \code{pdf:exobj} can be used for designing stamps.
-Those specials ``capture'' all typset material enclosed by them into a
+Those specials ``capture'' all typset material enclosed by them into a PDF
 \keyword{Form XObject}, which is a reusable graphics object like included images.
 
 For a simple example,
@@ -1152,10 +1192,10 @@ For a simple example,
 \special{pdf:exobj}
 \end{lstlisting}
 It captures typeset material ``My Own Stamp'' (this example uses \code{fontspec}
-package's command for changing font size and text color) into an object
+package's command for changing font size and text color) into the object labeled as
 \code{MyStamp} for later reuse.
-Then, \code{AP} (\keyword{appearance dicrionary}) entry for controling
-the appearance of annotations is used in the annotation dictionary:
+Then, \code{AP} (\keyword{appearance dicrionary}) entry for controling the appearance
+of annotations is used as,
 \begin{lstlisting}
 \special{pdf:ann width 280pt height 40pt
   <<
@@ -1165,14 +1205,15 @@ the appearance of annotations is used in the annotation dictionary:
   >>
 }
 \end{lstlisting}
-Text stored in \code{@MyStamp} is used as ``Normal'' (\code{AP} entry \code{N})
-appearance. (\code{R} for ``Rollover'' and \code{D} for `Down'' can be used.)
+The image captured into the object \code{MyStamp} is used as ``Normal''
+(\code{AP} dictionary entry \code{N}) appearance.
+(\code{R} for ``Rollover'' and \code{D} for ``Down'' can be used.)
 
 \parbox[t][0pt][c]{280pt}{%
 \special{pdf:bxobj @MyStamp width 280pt height 0pt depth 40pt}%
 \addfontfeature{Scale=4,Color=FF9933}My Own Stamp%
 \special{pdf:exobj}%
-}
+}%
 
 The result is:
 \begin{center}
@@ -1185,7 +1226,7 @@ The result is:
 }
 \end{center}
 
-With the following code, \dvipdfmx\ reads source file and creates a stream
+With the following code, \dvipdfmx\ reads the source file and creates a stream
 object named \code{SourceFile}, and then creates file attachment annotation.
 \marginnote{%
 \special{pdf:fstream @SourceFile (\jobname.tex)}%
@@ -1224,7 +1265,7 @@ object named \code{SourceFile}, and then creates file attachment annotation.
    >>
 }
 \end{lstlisting}
-A push-pin image must be shown in the margin if viewer supports this kind of
+A push-pin image must be shown on the margin if viewer supports this kind of
 annotation.
 PDF viewer applications are required to provide predefined icon appearances
 at least for the following standard icons: \code{Graph}, \code{PushPin},
@@ -1232,7 +1273,7 @@ at least for the following standard icons: \code{Graph}, \code{PushPin},
 
 \subsubsection{Special Color Space}
 
-This section gives various examples of using \keyword{Special color spaces}.
+This section shows various examples of using \keyword{Special color spaces}.
 Examples in this section have a common structure. They consist of essentially
 three parts. The first part is for definining color space itself.
 PDF object creation commands like \code{pdf:obj} and \code{pdf:stream} are used
@@ -1245,13 +1286,13 @@ for this purpose. Next is for registering color space resources in the page's
 \end{lstlisting}
 where \code{@resource} is a special keyword representing current page's
 Resource Dictionary and \code{Category} (to be replaced by actual category
-name) is category name such as \code{ColorSpace}.
+name) is a category name such as \code{ColorSpace}.
 Finally, graphics objects are placed, with or with a combination of
-text and, PDF drawing operators inserted by \code{pdf:code} or
-\code{pdf:contents} specials.
+text and, PDF drawing operators inserted by the \code{pdf:code} or the
+\code{pdf:contents} special.
 
 %%EXAMPLE: Separation Color Space
-The first example is \keyword{Separation} color space:
+The first example is the \keyword{Separation} color space:
 \special{pdf:stream @TintTransform1
   ({0 exch dup 0.62 mul exch 0})
   <<  /FunctionType 4
@@ -1333,18 +1374,18 @@ color $v$ is approximated as $(0, 0.62v, v, 0)$ in CMYK color space for
 alternate display here.
 
 The \code{cs} operator for selecting color space and the \code{scn} operator
-for color values are used in \code{pdf:code} special.
-Be sure that \code{pdf:put} command, which puts color space resources
+for color values are used in the \code{pdf:code} special.
+Be sure that the \code{pdf:put} command, which puts color space resources
 into the current page's Resource Dictionary, goes into the same page as
 subsequent drawing commands.
 
 \dvipdfmx\ currently does not have an easy interface for using various color
 space families such as CIE-Based color spaces (e.g., calibrated colors and
 color space with an ICC profile) and Special color spaces (e.g., indexed,
-separation, and shading and patterns).
+separation, shading and patterns).
 
 %%EXAMPLE: Shading
-Another example is \keyword{shading pattern}:
+Another example is a \keyword{shading pattern}:
 \begin{lstlisting}
 \special{pdf:put @resources <<
   /Shading <<
@@ -1378,9 +1419,10 @@ This example shows an axial shading (\code{ShadingType} 2) pattern.
 }
 \end{center}
 
-Type 2 (Exponential Interpolation) \keyword{Function} is used for mapping
-coordinate values into color values. The above example, with the exponent
-$N=1$, is just a simple linear-gradient.
+The shading pattern requires coordinate values to be mapped into color values.
+Type 2 (Exponential Interpolation) \keyword{Function} is used for defining how
+this mapping should occur here.
+The above example, with the exponent $N=1$, is just a simple linear-gradient.
 
 The final examples is a \keyword{tiling pattern}.
 \begin{lstlisting}
@@ -1435,7 +1477,7 @@ the \keyword{pattern cell} for this tiling pattern. With the following code,
     0 0 320 100 re f
 }
 \end{lstlisting}
-A box filled with the tiling pattern defined above is drawn.
+a box filled with the tiling pattern defined above is drawn.
 \special{pdf:stream @MyPattern
     (0.16 0 0 0.16 0 0 cm 4 w
      50 0 m 50 28 28 50 0 50 c S 100 50
@@ -1552,7 +1594,7 @@ page as subsequent grahics and text drawing operators.
 \noindent{}A new special \code{dvipdfmx:config} was introduced in
 \TeX Live 2016 which makes it possible to invoke a command line option.
 Several single letter command line options except \option{D} are supported.
-For examples,
+For example,
 \begin{lstlisting}
 dvipdfmx:config C 0x10
 \end{lstlisting}
@@ -1565,8 +1607,8 @@ compatibility flags.
 PS (PostScript) specials can be used to insert a raw PostScript code for drawing
 graphics objects and transforming subsequent text and graphics.
 Please note that support for PostScript operators in \dvipdfmx\ is very
-limited. It is just enough for supporting \MP\ output. Only basic set of
-operators for arithmetic and math, stack operation and manupilation,
+limited. It is just enough for interpreting PostScript figures output by \MP.
+Only a basic set of operators for arithmetic and math, stack operation and manupilation,
 graphics state, path construction and painting, glyph and font, are supported.
 See, Table~\ref{TABLE:PS} for the list of
 recognized PostScript operators.
@@ -1738,9 +1780,10 @@ use of it is deprecated.
 
 \subsection{Specifying Unicode Plane}
 
-As there are no existing 3-bytes or 4-bytes TFM formats, the only way to use
-Unicode characters other than the BMP is to map code range 0-65535 to different
-planes via (e.g., to plane 1) \option{-p 1} fontmap option. This option is
+As there are no existing TFM formats supporting 3-byte or 4-byte character
+encodings, the only way to use Unicode characters other than the BMP is to
+map the code range 0-65535 to different planes via (e.g., to plane 1)
+the \option{-p 1} fontmap option. This option is
 available only when \code{unicode} is specified in the encoding field.
 
 \subsection{OpentType Layout Feature}
@@ -1756,7 +1799,7 @@ enables an OpentType Layout Feature related to vertical writing, namely,
 \newfeature{Addition in \TeX\ Live 2017.}
 
 The \option{-l} (lower case el) option can be used to enable various
-OpenType Layout GSUB Features. For examples, \option{-l jp04} enables
+OpenType Layout GSUB Features. For example, \option{-l jp04} enables
 \code{jp04} feature to select \lnum{JIS2004} forms for Kanjis.
 Features can be specified as a ``:'' separated list of OpenType Layout
 Feature tags like \option{-l vkna:jp04}. Script and language may be
@@ -1783,31 +1826,31 @@ general many-to-many glyph substitutions does not take effect.
 \section{Other Improvements}
 
 This section briefly describes other improvements made for \dvipdfmx.
-There is an extension to glyph name handling in \code{enc} files for
+There is an extension to glyph name handling in the \code{enc} file for
 seamless support of both PostScript Type1 and TrueType fonts.
 PostScript Type1 font support is enhanced although this format might be
 considered obsolete.
 
 \subsection{Extended Glyph Name Syntax}
 
-\dvipdfmx\ accepts the following syntax for glyph names in \code{enc} files:
+\dvipdfmx\ accepts the following syntax for glyph names in the \code{enc} file:
 \code{uni0130}, \code{zero.onum} and \code{T\_h.liga}.
 Each represents a glyph accessed with Unicode value \code{U+0130},
-oldstyle number for zero and ``Th'' ligature accessed via OpenType
+oldstyle number for zero and ``Th'' ligature accessed via the OpenType
 Layout GSUB Feature \code{onum} and \code{liga}, respectively.
 Note that \dvipdfmx\ does not understand glyph names which directly
 use a glyph index such as \code{index0102} or \code{gid2104}.
 
 When \dvipdfmx\ encounters a glyph name, e.g., \code{T\_h.liga}, it first looks
 for OpenType \code{post} table if such glyph name exists; if it exists, then
-\dvipdfmx\ simply uses \code{post} table and maps the glyph name to glyph index;
-if not, \dvipdfmx\ tries to convert \code{T\_h} to Unicode sequence (U+0054
+\dvipdfmx\ simply uses \code{post} table and maps the glyph name to the glyph index;
+if not, \dvipdfmx\ tries to convert \code{T\_h} to a Unicode sequence (U+0054
 U+0068 in this example) via the AGL mapping; then, OpenType \code{cmap} table is used
-to further convert resulting Unicode sequence to the sequence of glyph indices;
-finally, OpenType Layout Feature \code{liga} is applied to get the desired glyph.
+to further convert the resulting Unicode sequence to the sequence of glyph indices;
+finally, the OpenType Layout Feature \code{liga} is applied to get the desired glyph.
 
-A glyph name of the form \code{a.swsh2} can be specified to denote 2nd swash
-variant form of letter `a'.
+A glyph name of a form \code{a.swsh2} can be specified to denote the 2nd swash
+variant form of the letter `a'.
 
 \subsection{CFF Conversion}
 
@@ -1815,17 +1858,18 @@ variant form of letter `a'.
 which greatly reduces size of the resulting PDF file when using Type1 fonts.
 Conversion is essentially `lossless' and there should not be any quality loss.
 However, due to differences in the ability of rasterizers, there might be
-noticeable differences on the rendering result.
+noticeable differences on rendering result.
 
-When (older) Type1 fonts are used, \dvipdfmx\ may give the following warning
+When an older Type1 font is used, \dvipdfmx\ may give the following warning
 message:
 \begin{lstlisting}
 Obsolete four arguments of "endchar" will be used for Type1
 "seac" operator.
 \end{lstlisting}
-This happens when there is an accented character made from composite glyphs.
-This warning message is given as conversion can't be done without the use of
-deprecated \code{endchar} operator for composite glyphs. However, as mentioned in
+It happens when there is an accented character made as a composite glyph using
+the ``seac'' operator.
+This warning is issued as conversion can't be done without relying on the
+\emph{deprecated} usage of the \code{endchar} operator. However, as mentioned in
 ``Appendix C Compatibility and Deprecated Operators'' of Adobe Technical
 Note \#5177,
 ``\href{http://wwwimages.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5177.Type2.pdf}{Type 2 Charstring Format}'',
@@ -1833,17 +1877,17 @@ PDF applications should support this operator and hence this warning
 message can be ignored.
 
 Use of Type1 font should be avoided as much as possible.
-Please consider using OpenType version.
+Please consider using OpenType version instead.
 
 \section{Font Licensing and Embedding}
 
 In OpenType font format, information regarding how a font should be treated
 when creating a document can be recorded.%
-\footnote{See, `` \href{http://www.microsoft.com/typography/otspec/os2.htm}{OpenType Sepcification: OS/2 -- OS/2 and Windows Metrics Table}''.}
+\footnote{See, ``\href{http://www.microsoft.com/typography/otspec/os2.htm}{OpenType Sepcification: OS/2 -- OS/2 and Windows Metrics Table}''.}
 \dvipdfmx\ uses this information to decide whether font embedding is permitted.
 
 This font embedding information is indicated by the flag called \code{fsType}
-recorded in OpenType font files; each bit representing different restrictions on
+recorded in OpenType font files; each bits representing different restrictions on
 font embedding. If multiple flag bits are set in \code{fsType}, the least restrictive
 license granted takes precedence in \dvipdfmx.
 The \code{fsType} flag bit recognized by \dvipdfmx\ is as follows:
@@ -1852,13 +1896,13 @@ The \code{fsType} flag bit recognized by \dvipdfmx\ is as follows:
     \item Editable embedding
     \item Embedding for Preview \& Print only
 \end{itemize}
-\dvipdfmx\ gives the following warning message for fonts with `Preview \& Print only'
+\dvipdfmx\ issues the following warning message for fonts with `Preview \& Print only'
 setting:
 \begin{verbatim}
   This document contains 'Preview & Print' only licensed font
 \end{verbatim}
 
-For fonts with this type of licensing, font embedding is allowed solely for the
+For a font with this type of licensing, font embedding is allowed solely for the
 purpose of (on-screen) viewing and/or printing; further editing of the document
 or extracting embedded font data for other purposes are not allowed.
 One way to ensure this condition is to protect your document with a non-empty
@@ -1870,21 +1914,21 @@ of the editable-embedding flag and unrecognized license flag is set,
 the font is treated as editable-embedding allowed, however, if only
 unrecognized flags are set, the font is not embedded.
 
-Embedding flags are preserved in the embedded font if they are embedded
+Font Embedding flags are preserved in the embedded font if they are embedded
 as a TrueType font or a CIDFontType2 CID-keyed font.
-For all font embedded as a PostScript font (Type1C and CIDFontType0
+For all fonts embedded as a PostScript font (Type1C and CIDFontType0
 CID-keyed font), they are not preserved.
-Only \code{Copyright} and \code{Notice} in the FontInfo dictionary are
-preserved in this case.
+Only \code{Copyright} and \code{Notice} in the \keyword{FontInfo} dictionary
+are preserved in this case.
 
 Some font vendors put different embedding restrictions for different
-condition; e.g., font embedding might not be permitted for commercial
-use unless you acquire ``commercial license'' separately.
+condition; e.g., font embedding might not be permitted for the commercial
+use unless you acquire the ``commercial license'' separately.
 Please read EULA carefully before making decision on the font usage.
 
-See, for examples,
+See, for example,
 \href{http://www.adobe.com/products/type/font-licensing/font-embedding-permissions.html}{Adobe's site on font embedding permissions}
-for fonts in the Adobe Type Library.
+for the font in the Adobe Type Library.
 Microsoft also has a
 \href{http://www.microsoft.com/typography/RedistributionFAQ.mspx}{FAQ page on Font Redistribution}.
 
@@ -1901,8 +1945,8 @@ embedding from Japan Typography Association (in Japanese):\medskip
 
 \section{Encryption Support}\label{SEC:encryption}
 
-\dvipdfmx\ offers basic PDF password security support including 256-bits AES encryption.
-Only ``Standard'' security handler is supported and Public-key security handler is not
+\dvipdfmx\ offers basic PDF password security support including the 256-bit AES encryption.
+Only the ``Standard'' security handler is supported and the Public-key security handler is not
 supported.
 
 Encryption is enabled by \option{-S} command line option.
@@ -1929,7 +1973,7 @@ permission flags respectively, and are briefly explained in Table~\ref{TABLE:enc
   \label{TABLE:enc-options}
 \end{table}
 
-When \dvipdfmx\ is invoked with encryption via \code{-S} option,
+When \dvipdfmx\ is invoked with encryption via the \code{-S} option,
 passwords will be asked.
 However, in some circumstances, it might be desirable to avoid being prompted for
 passwords. In that case, use the \code{pdf:encrypt} special to supply passwords in
@@ -1937,7 +1981,7 @@ the \TeX\ file, as,
 \begin{lstlisting}
   \special{pdf:encrypt userpw (foo) ownerpw (bar) length 128 perm 20}
 \end{lstlisting}
-Here, user and owner password are supplied as PDF string objects (\code{foo} and \code{bar}
+Here, user and owner passwords are supplied as PDF string objects (\code{foo} and \code{bar}
 in the example above) which can be empty.
 
 Up to two passwords can be specified for a document -- an owner password and a user password.
@@ -1957,7 +2001,7 @@ Access permision flags can be specified via \option{-P} command-line option.
 Each bits of (32-bit unsigned) integer number given to this option represents user
 access permissions; e.g., bit position 3 for allowing ``print'', 4 for
 ``modify'', 5 for ``copy or extract'', and so on. See, Table~\ref{TABLE:flags}.
-For examples, \code{-P 0x34} allows printing, copying and extraction of text, and adding and
+For example, \code{-P 0x34} allows printing, copying and extraction of text, and adding and
 modifying text annotation and filling in interactive form fields (but disallows
 modification of the contents of the document).
 \begin{table}
@@ -2009,7 +2053,7 @@ allowed,
   dvipdfmx -V 2.0 -S -K 256 -P 0x24 input.dvi
 \end{lstlisting}
 
-The default values for \option{K} is 40 and for \option{-P} is \code{0x003C0}
+The default value for \option{K} is 40 and for \option{-P} is \code{0x003C0}
 (all bits from bit-position 3 to 6 set).
 
 \chapter{Compatibility}
@@ -2018,7 +2062,7 @@ The default values for \option{K} is 40 and for \option{-P} is \code{0x003C0}
 
 There are various minor incompatible changes to \dvipdfm.
 
-The \option{-C} command line option  may be used for compatibility to
+The \option{-C} command line option may be used for compatibility to
 \dvipdfm\ or older versions of \dvipdfmx. The \option{-C} option takes flags
 meaning
 \begin{itemize}
@@ -2054,15 +2098,15 @@ Support for format 2 CFF charsets was broken.
 \item Added simplified version of OpenType Layout support: The `\option{-l}'
 option in fontmaps.
 \end{itemize}
-The full \code{ChangeLog} entries can be viewed via the web interface of \TeX\
-Live SVN repository:
+The full \code{ChangeLog} entries can be viewed via the web interface of the
+\TeX\ Live SVN repository:
 \medskip
 
 \url{http://www.tug.org/svn/texlive/trunk/Build/source/texk/dvipdfm-x}
 \medskip
 
 There was an undocumented feature for supporting OpenType Layout but it was
-dropped. Simplified support for OpenType Layout was intorduced instead.
+dropped. Simplified support for the OpenType Layout was intorduced instead.
 
 
 %\renewcommand{\refname}{Further Reading}
