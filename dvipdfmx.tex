@@ -397,8 +397,9 @@ for \TeX\ Live users.
 
 \subsection{The Adobe Glyph List and ToUnicode Mappings}
 
-The Adobe Glyph List\footnote{See, ``\href{http://github.com/adobe-type-tools/agl-specification}{Adobe Glyph List Specification}''} (AGL)
-describes correspondence between PostScript glyph names (e.g., \code{AE},
+The Adobe Glyph List\footnote{See,
+``\href{http://github.com/adobe-type-tools/agl-specification}{Adobe Glyph List Specification}''}
+(AGL) describes correspondence between PostScript glyph names (e.g., \code{AE},
 \code{Aacute},...) and Unicode character sequences representing them.
 Some features described in the section ``Unicode Support'' requires AGL file.
 
@@ -1645,16 +1646,54 @@ The following code draws Japanese text like shown in Figure~\ref{FIG:verttext}:
 }
 \end{lstlisting}
 
-\chapter{Fonts}
+\chapter{Fonts and Encodings}
 
-\section{Font Mapping}
+\section{Fonts and Encodings Support}
 
-Syntax of fontmap file is basically the same as \dvipdfm. There are few
-extensions in \dvipdfmx. In addition to 8-bit \code{enc} files and
-keyword \code{builtin} and \code{none}, \dvipdfmx\ accepts CMap name and
-the keyword \code{unicode} in the encoding field.
+In \dvipdfmx, all font formats supported by \dvipdfm\ are also supported with
+many improvements: The CFF conversion for PostScript Type1 fonts\footnote{PostScript
+Type1 font support is restricted to the binary format as in \dvipdfm.} is
+implemented which greatly reduces the output file size. Embedded TrueType fonts are
+now subsetted. The OpenType font format is also supported.\footnote{Its
+implementation is based on the OpenType specification version 1.4.
+Newly added features such as color fonts and variable fonts are not supported yet.}
 
-This section is completely irrevant to \XeTeX\ users.
+There are various enhancements made for supporting Unicode and legacy multi-byte
+character encodings for East Asian languages.
+
+
+\section{Font Mappings}
+
+The Syntax of font-mapping (fontmap) files is basically the same as in \dvipdfm.
+There are few extensions available in \dvipdfmx. In addition to the 8-bit \code{enc}
+file and keywords \code{builtin} and \code{none}, \dvipdfmx\ accepts a PostScript CMap
+Resource name and the keyword \code{unicode} in the encoding field.
+
+When the keyword \code{unicode} is specified in the encoding field of fontmap
+files, it is assumed that Unicode values are used in the input DVI file.
+
+\begin{lstlisting}
+  urml    unicode  SourceHanSerifJP-Light.otf
+\end{lstlisting}
+
+Although the DVI format allows 3-byte and 4-byte character codes to be used,
+\dvipdfmx\ only supports up to 2-byte range since there is no TFM format supporting
+3-byte or 4-byte codes.
+
+For PostScript Type1 fonts which do not support Unicode natively, an auxilially file,
+the Adobe Glyph List, is required to make it possible to use fonts with Unicode access.
+
+As a general framework for supporting legacy multi-byte encodings, \dvipdfmx\ employs
+PostScript CMap Resources for handling input strings encoded in various
+character encodings. A CMap name can be specified in the encoding field just like
+the encoding name for 8-bit encodings. For example, to specify the CMap ``UniJIS-UCS2-H'',
+
+\begin{lstlisting}
+  urml    UniJIS-UCS2-H  HiraMinPro-W3.otf
+\end{lstlisting}
+
+For information on the Adobe Glyph List and PostScript CMap Resources, see,
+the section \ref{SEC:auxfiles}, ``Auxilially Files.''
 
 \subsection{Extended Syntax and Options}
 
@@ -1675,7 +1714,7 @@ A typical example looks like:
 gbsn@EUC@  GB-EUC-H  gbsn00lp
 \end{lstlisting}
 where TFMs \code{gbsn00}, \code{gbsn01}, \code{gbsn02}... are mapped into a
-single font named \code{gbsn00lp} via the rule described in SFD file
+single font named \code{gbsn00lp} via the rule described in the SFD file
 \code{EUC}.
 
 \subsubsection{TrueType Collection Index}
@@ -1721,7 +1760,7 @@ described here since it might still be useful for some situations.
 
 \dvipdfmx\ recognizes several `Standard' CJK fonts although there are no such
 notion in PDF. In older days where there were not so many freely available CJK
-fonts, it was sometimes useful to create PDF files without embedded fonts and
+fonts, it was sometimes useful to create PDF files without embedding fonts and
 let PDF viewers or printers to use substitute fonts (tend to be higher quality)
 installed in their systems. \dvipdfmx\ `knows' several fonts which might be
 available in PostScript printers and PDF applications such as Acrobat Reader,
@@ -1788,7 +1827,7 @@ available only when \code{unicode} is specified in the encoding field.
 
 \subsection{OpentType Layout Feature}
 
-OpenType Layout Feature fontmap options mentioned below are only meaningful
+The OpenType Layout Feature fontmap options mentioned below are only meaningful
 when \code{unicode} is specified in the encoding field.
 
 With the \option{-w} option, writing mode can be specified.
@@ -1811,7 +1850,7 @@ An example can be
 uprml-v  unicode  SourceHanSerifJP-Light.otf  -w 1 -l jp90
 \end{lstlisting}
 which declares that font should be treated as for vertical writing and
-use \lnum{JIS1990} form for Kanjis. (See, Figure~\ref{FIG:jp90} for an example)
+use \lnum{JIS1990} form for Kanjis.
 
 \begin{figure}
 \centering
@@ -1820,7 +1859,7 @@ use \lnum{JIS1990} form for Kanjis. (See, Figure~\ref{FIG:jp90} for an example)
 \end{figure}
 
 This feature is limited to the single substitution, there are no way to select
-a glyph from multiple candidates, such as in \code{aalt}, and specifying
+a glyph from multiple candidates, such as in the \code{aalt} feature, and specifying
 general many-to-many glyph substitutions does not take effect.
 
 \section{Other Improvements}
@@ -1883,7 +1922,9 @@ Please consider using OpenType version instead.
 
 In OpenType font format, information regarding how a font should be treated
 when creating a document can be recorded.%
-\footnote{See, ``\href{http://www.microsoft.com/typography/otspec/os2.htm}{OpenType Sepcification: OS/2 -- OS/2 and Windows Metrics Table}''.}
+\footnote{See,
+``\href{http://www.microsoft.com/typography/otspec/os2.htm}{OpenType Sepcification:
+OS/2 -- OS/2 and Windows Metrics Table}''.}
 \dvipdfmx\ uses this information to decide whether font embedding is permitted.
 
 This font embedding information is indicated by the flag called \code{fsType}
