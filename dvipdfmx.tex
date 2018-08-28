@@ -162,7 +162,7 @@ Latest version and contact information can be found at:\medskip
 \url{http://github.com/shirat74/dvipdfm-x-doc}
 \medskip
 
-\noindent{}Please send quenstions or suggestions.
+\noindent{}Please send questions or suggestions.
 
 \subsection{\xdvipdfmx}
 
@@ -214,11 +214,11 @@ available from the CTAN site mentioned above for basic usage.
 
 Some additional command line options recognized by \dvipdfmx\ are listed in
 Table~\ref{TABLE:options}. In addition to this, the \code{-V} option for specifying
-the output PDF version now accepts the verion specification of a form \code{2.0}. Try
+the output PDF version now accepts the version specification of a form \code{2.0}. Try
 \begin{lstlisting}
 dvipdfmx --help
 \end{lstlisting}
-for the list of command line options and thier explanations.
+for the list of command line options and their explanations.
 
 \begin{table}
     \centering
@@ -241,7 +241,7 @@ for the list of command line options and thier explanations.
         default value is \code{-2}. (ignore image cache) \\
         \code{-M} & Process \MP\ generated PostScript file.\\
         \code{-E} & Always try to embed fonts \emph{regardless of
-        liscensing}.\\
+        licensing}.\\
         \code{-O} \textit{number} & Set maximum depth of open bookmark item.\\
         \hline
     \end{tabular}
@@ -260,16 +260,16 @@ This section is intended to be a quick guide for each users.
 \subsection{\texorpdfstring{\XeTeX}{XeTeX}}
 
 \XeTeX\ users
-normally do not invoke the \dvipdfmx\ command directly. To contorol the
+normally do not invoke the \dvipdfmx\ command directly. To control the
 behavior of \dvipdfmx, please consider using the \code{dvipdfmx:config}
 special explained in the section of ``\hyperref[SEC:specials]{Specials}.''
 Some part of this document is irrelevant for \XeTeX\ users.
 
 \subsection{p\TeX}
-p\TeX\ users are at least required to install several auxilially files
-mentioned in the section of ``\hyperref[SEC:auxfiles]{Auxilially Files}''
+p\TeX\ users are at least required to install several auxiliary files
+mentioned in the section of ``\hyperref[SEC:auxfiles]{Auxilary Files}''
 and to setup font-mappings. Just install the \package{adobemappings} and
-\package{glyphlist} for auxilially files. (As \TeX\ Live basic intallation
+\package{glyphlist} for auxiliary files. (As \TeX\ Live basic installation
 requires them, they are probably already installed for \TeX\ Live users.)
 
 Setting up fontmaps can be done easily with help of the \package{ptex-fontmaps}
@@ -307,8 +307,8 @@ The former might be easier as the auto-creation of fontmap files can be done
 with the \code{updmap} program and the \package{ptex-fontmaps} package. But in
 this method there are some difficulties when using a font which employs a character
 collection (glyph repertoire) other than Adobe-Japan1 in the case of PostScript
-flvavored OpenType fonts.
-In the later case, the \package{adobemappings} package is not reuiqred
+flavored OpenType fonts.
+In the later case, the \package{adobemappings} package is not required
 and newer PostScript flavored OpenType fonts which do not employ Adobe-Japan1
 can be used too.
 
@@ -329,14 +329,14 @@ document information and annotations to be shown correctly:
 \begin{lstlisting}
 \AtBeginDocument{\special{pdf:tounicode UTF8-UCS2}}
 \end{lstlisting}
-Here, input encodig is assumed to be UTF-8.
+Here, input encoding is assumed to be UTF-8.
 
 \subsection{CJK-\LaTeX}
 
 CJK-\LaTeX\ users are required to have \keyword{Subfont Definition Files}
 to be installed. They are available as part of the \package{ttfutils} package.
 
-To use TrueType Ariphic fonts provided by the \package{arphic-ttf} package:
+To use TrueType Arphic fonts provided by the \package{arphic-ttf} package:
 \begin{lstlisting}
 \documentclass{article}
 \usepackage{CJKutf8}
@@ -368,7 +368,7 @@ are needed to enable those features. This section shortly describes about them.
 \keyword{PostScript CMap Resources}\footnote{See,
 ``\href{http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5014.CIDFont\_Spec.pdf}%
 {Adobe CMap and CIDFont Files Specification}''}
-are required for supporting lagacy encodings such as Shift-JIS, EUC-JP, \lnum{Big5},
+are required for supporting legacy encodings such as Shift-JIS, EUC-JP, \lnum{Big5},
 and other East Asian encodings. \dvipdfmx\ internally identifies glyphs with
 identifiers (CIDs\footnote{PostScript terminology ``Character IDentifier''.})
 represented as an integer ranging from 0 to 65535 in the CID-based glyph access.
@@ -494,9 +494,9 @@ limitations of Unicode conversion mechanism with ToUnicode CMaps.
 \subsection{Other Extensions}
 
 \dvipdfmx\ can generate encrypted PDF documents to protect its contents from
-unauthorized access. It is limited to passorwd-based authentication, and
+unauthorized access. It is limited to password-based authentication, and
 public-key based authentication is not supported. The 256-bit AES encryption is
-also supported for PDF version 1.7 adn 2.0 setting although it may not be supported
+also supported for PDF version 1.7 and 2.0 setting although it may not be supported
 by PDF viewers.
 
 There are various other improvements over \dvipdfm. The most notable one is
@@ -608,10 +608,10 @@ images.
 
 JPEG is relatively well supported. \dvipdfmx\ supports embedded ICC Profiles
 and CMYK color. Embedded XMP metadata is also preserved in the output PDF.
-JFIF or Exif data might be used to determin image's physical size.
+JFIF or Exif data might be used to determine image's physical size.
 
 As the PDF specification does not require information irrelevant to
-displaying images to be embedded, \dvipdfmx\ does not embedd whole data.
+displaying images to be embedded, \dvipdfmx\ does not embed whole data.
 Especially, not all application specific data is retained. Application 
 specific data such as JFIF, Exif, and \code{APP14} Adobe marker are
 preserved.
@@ -630,12 +630,12 @@ streams and object streams introduced in \lnum{PDF-1.5}.
 \dvipdfmx\ also supports inclusion of PDF pages other than the first page.
 However, tagged PDF may cause problems and annotations are not kept.
 
-As there are no clear way to determin the natural extent of the graphics content
+As there are no clear way to determine the natural extent of the graphics content
 to be clipped, \dvipdfmx\ preferably try to find the \emph{crop box} to decide
 image size. If there are no crop box \emph{explicitly} specified,%
 \footnote{There are some accusations by Japanese \TeX\ users as
 ''violating the PDF spec.'' regarding this point. However, what we are
-talking about it how to guess the \emph{natural} or \emph{intended} size of
+talking about is how to guess the \emph{natural} or \emph{intended} size of
 images but not the default value of the PDF crop box itself.} then it
 tries to refer other boundary boxes such as the \emph{art box}. If there are no
 possible boundaries of the graphics content explicitly specified, the \emph{media box},
@@ -650,7 +650,7 @@ or \code{trimbox} for selecting page's boundary box to be used. For example,
 \begin{lstlisting}
 \special{pdf:image pagebox artbox page 3 (foo.pdf)}
 \end{lstlisting}
-includes 3rd page of `foo.pdf' with the boundary box set to art box.
+includes 3rd page of `foo.pdf' with the boundary box set to the art box.
 
 \subsubsection{Other Image Formats}
 
@@ -689,7 +689,7 @@ Default value is set to -2.
 \section{Graphics Drawing}
 
 \dvipdfmx\ does not offer a high level interface to draw graphics objects.
-A possible way to draw grahpics is to write raw PDF graphics drawing codes and
+A possible way to draw graphics is to write raw PDF graphics drawing codes and
 then to insert them into the output via \code{special} commands.
 
 To show an example, the following code:
@@ -710,7 +710,7 @@ isolated graphics object.
 
 The above example illustrates a typical example of PDF graphics drawing.
 It consists of three parts; setting graphics state, constructing a path, and painting
-a path. A Graphic object are specified as a sequence of operators and thier operands
+a path. A Graphic object are specified as a sequence of operators and their operands
 using \emph{postfix notation}. \keyword{Graphics state operators} comes first,
 \code{cm} in this example sets the current transformation matrix (CTM). Then,
 \keyword{path construction} operators follow; move to position $(0, 100)$,
@@ -738,7 +738,7 @@ for PDF graphics operators.
 
 \subsubsection{Graphics State Operators}
 
-The \code{cm} operator modifies CTM by concatinating the specified matrix.
+The \code{cm} operator modifies CTM by concatenating the specified matrix.
 Operands given to this operators are six numbers each representing
 transformation matrix elements:
 translation represented as $[1, 0, 0, 1, t_x, t_y]$,
@@ -828,7 +828,7 @@ Talbe~\ref{TAB:operatorsGS}.
         --- & \code{q} & Save the current graphics state.\\
         --- & \code{Q} & Restore the previously saved graphics state.\\
         $a$ $b$ $c$ $d$ $e$ $f$ & \code{cm} & Modify the current transformation matrix
-        by concatinating the specified matrix.\\
+        by concatenating the specified matrix.\\
         \textit{width} & \code{w} & Set the line width.\\
         \textit{array} \textit{phase} & \code{d} & Set the line dash pattern.\\
         $r$ $g$ $b$ & \code{RG} & Set the stroking color space to RGB and
@@ -876,7 +876,7 @@ This example is an approximated circle drawn by four Bézier curves.
 Table~\ref{TAB:operators} shows a list of path construction operators.
 Those who are accustomed to the PostScript language should note that in PDF
 the current path is not a part of the graphics state,
-and hece is \emph{not} saved and restored along with the other graphics state
+and hence is \emph{not} saved and restored along with the other graphics state
 parameters.
 
 \begin{table}
@@ -938,7 +938,7 @@ information on PDF specials.
 
 \subsection{Additions to PDF Specials}
 
-Several \code{special} commnads are added for more flexible PDF generation:
+Several \code{special} commands are added for more flexible PDF generation:
 creation of arbitrary stream objects, controlling \dvipdfmx\ behavior, and some
 specials which might be useful for graphics drawing.
 
@@ -963,7 +963,7 @@ For example, to incorporate XMP Metadata stored from the file \code{test.xmp},
 \special{pdf:put @catalog << /Metadata @xmp >>}
 \end{lstlisting}
 
-Similary, \code{pdf:stream} special can be used to create a PDF stream
+Similarly, \code{pdf:stream} special can be used to create a PDF stream
 object from a PDF string instead of a file.
 \begin{lstlisting}
 pdf:stream @identifier (stream contents) <<dictionary>>
@@ -1109,7 +1109,7 @@ TU T TM
 
 \newfeature{Addition in \TeX\ Live 2019}
 
-The list of dictionary entries subect to conversion can be extended by supplying
+The list of dictionary entries subject to conversion can be extended by supplying
 additional dictionary keys as an array object:
 \begin{lstlisting}
   \special{pdf:tounicode 90ms-RKSJ-UCS2 [/RC /DS]}
@@ -1117,9 +1117,9 @@ additional dictionary keys as an array object:
 
 If the name of conversion CMap contains one of the keywords RKSJ, \lnum{B5}, GBK, and KSC,
 PDF string objects are treated specially when they are parsed. A two byte sequence
-starting with the first byte's hight bit set is treated ''as is'' so that
+starting with the first byte's high bit set is treated ''as is'' so that
 the \code{0x5c} byte appears in the second byte is not treated as an escape sequence.
-This behavior is not complaiant to the PDF specification.
+This behavior is not compliant to the PDF specification.
 
 \subsection{PDF Special Examples}
 
@@ -1188,9 +1188,9 @@ like figure,
 Other keywords such as \code{Expired}, \code{Final}, \code{Draft}, and so on,
 can be used in place of \code{Approved}.
 
-One can create stamps of thier own style. For this purpose, other specials
+One can create stamps of their own style. For this purpose, other specials
 \code{pdf:bxobj} and \code{pdf:exobj} can be used for designing stamps.
-Those specials ``capture'' all typset material enclosed by them into a PDF
+Those specials ``capture'' all typeset material enclosed by them into a PDF
 \keyword{Form XObject}, which is a reusable graphics object like included images.
 
 For a simple example,
@@ -1203,7 +1203,7 @@ For a simple example,
 It captures typeset material ``My Own Stamp'' (this example uses \code{fontspec}
 package's command for changing font size and text color) into the object labeled as
 \code{MyStamp} for later reuse.
-Then, \code{AP} (\keyword{appearance dicrionary}) entry for controling the appearance
+Then, \code{AP} (\keyword{appearance dictionary}) entry for controlling the appearance
 of annotations is used as,
 \begin{lstlisting}
 \special{pdf:ann width 280pt height 40pt
@@ -1284,10 +1284,10 @@ at least for the following standard icons: \code{Graph}, \code{PushPin},
 
 This section shows various examples of using \keyword{Special color spaces}.
 Examples in this section have a common structure. They consist of essentially
-three parts. The first part is for definining color space itself.
+three parts. The first part is for defining color space itself.
 PDF object creation commands like \code{pdf:obj} and \code{pdf:stream} are used
 for this purpose. Next is for registering color space resources in the page's
-\keyword{Resource Dicrionary}. It can be done via \code{pdf:put} command as,
+\keyword{Resource Dictionary}. It can be done via \code{pdf:put} command as,
 \begin{lstlisting}
 \special{pdf:put @resource <<
   /Category << ...key-value pairs... >>
@@ -1594,7 +1594,7 @@ transparency example:
 \end{lstlisting}
 where values for \code{CA} and \code{ca} represent opacity of stroke and
 fill color respectively. Again, \code{pdf:put} command must go into the same
-page as subsequent grahics and text drawing operators.
+page as subsequent graphics and text drawing operators.
 
 \section{Dvipdfmx Extensions}
 
@@ -1617,7 +1617,7 @@ PS (PostScript) specials can be used to insert a raw PostScript code for drawing
 graphics objects and transforming subsequent text and graphics.
 Please note that support for PostScript operators in \dvipdfmx\ is very
 limited. It is just enough for interpreting PostScript figures output by \MP.
-Only a basic set of operators for arithmetic and math, stack operation and manupilation,
+Only a basic set of operators for arithmetic and math, stack operation and manipulation,
 graphics state, path construction and painting, glyph and font, are supported.
 See, Table~\ref{TABLE:PS} for the list of
 recognized PostScript operators.
@@ -1642,7 +1642,7 @@ recognized PostScript operators.
 
 It might be enough for the purpose of basic graphics drawings but as there are
 no support for conditionals and controls it is not enough for complicated tasks,
-espacially, the PSTricks package is not supported.
+especially, the PSTricks package is not supported.
 
 In \dvipdfmx, text handling is extended to support CJK text.
 The following code draws Japanese text like shown in Figure~\ref{FIG:verttext}:
@@ -1688,7 +1688,7 @@ Although the DVI format allows 3-byte and 4-byte character codes to be used,
 \dvipdfmx\ only supports up to 2-byte range since there is no TFM format supporting
 3-byte or 4-byte codes.
 
-For PostScript Type1 fonts which do not support Unicode natively, an auxilially file,
+For PostScript Type1 fonts which do not support Unicode natively, an auxiliary file,
 the Adobe Glyph List, is required to make it possible to use fonts with Unicode access.
 
 As a general framework for supporting legacy multi-byte encodings, \dvipdfmx\ employs
@@ -1701,7 +1701,7 @@ the encoding name for 8-bit encodings. For example, to specify the CMap ``UniJIS
 \end{lstlisting}
 
 For information on the Adobe Glyph List and PostScript CMap Resources, see,
-the section \ref{SEC:auxfiles}, ``Auxilially Files.''
+the section \ref{SEC:auxfiles}, ``Auxiliary Files.''
 
 \subsection{Extended Syntax and Options}
 
@@ -1713,7 +1713,7 @@ PDF files which can be non-compliant to the ISO standards.
 \subsubsection{SFD Specification}
 
 For bundling up a font split into multiple subfonts via SFD back into
-a single font, dvipdfmx supports extended sytax of the form
+a single font, dvipdfmx supports extended syntax of the form
 \begin{lstlisting}
 tfm_name@SFD@  encoding  filename  options
 \end{lstlisting}
@@ -1833,14 +1833,14 @@ map the code range 0-65535 to different planes via (e.g., to plane 1)
 the \option{-p 1} fontmap option. This option is
 available only when \code{unicode} is specified in the encoding field.
 
-\subsection{OpentType Layout Feature}
+\subsection{OpenType Layout Feature}
 
 The OpenType Layout Feature fontmap options mentioned below are only meaningful
 when \code{unicode} is specified in the encoding field.
 
 With the \option{-w} option, writing mode can be specified.
 \option{-w 1} denotes the font is for vertical writing. It automatically
-enables an OpentType Layout Feature related to vertical writing, namely,
+enables an OpenType Layout Feature related to vertical writing, namely,
 \code{vert} or \code{vrt2}, to choose proper glyphs for vertical text.
 
 \newfeature{Addition in \TeX\ Live 2017.}
@@ -1931,7 +1931,7 @@ Please consider using OpenType version instead.
 In OpenType font format, information regarding how a font should be treated
 when creating a document can be recorded.%
 \footnote{See,
-``\href{http://www.microsoft.com/typography/otspec/os2.htm}{OpenType Sepcification:
+``\href{http://www.microsoft.com/typography/otspec/os2.htm}{OpenType Specification:
 OS/2 -- OS/2 and Windows Metrics Table}''.}
 \dvipdfmx\ uses this information to decide whether font embedding is permitted.
 
@@ -2046,7 +2046,7 @@ Although PDF specification allows various character encodings other than \code{U
 for entering password, \dvipdfmx\ is unable to handle it properly.
 Thus it must be assumed that \code{US-ASCII} is used for password strings.
 
-Access permision flags can be specified via \option{-P} command-line option.
+Access permission flags can be specified via \option{-P} command-line option.
 Each bits of (32-bit unsigned) integer number given to this option represents user
 access permissions; e.g., bit position 3 for allowing ``print'', 4 for
 ``modify'', 5 for ``copy or extract'', and so on. See, Table~\ref{TABLE:flags}.
@@ -2059,7 +2059,7 @@ modification of the contents of the document).
         Bit Position & Meaning \\ \hline\hline
         3 & (Revision 2) Print the document. \\
           & (Revision 3 or greater) Print the document. Print quality depending on bit 12.\\
-        4 & Modify the contents of the documentby operations other than those controlled
+        4 & Modify the contents of the document by operations other than those controlled
             by bits 6, 9, and 11. \\
         5 & Copy or extract text and graphics from the document. \\
         6 & Add or modify text annotations, fill in interactive form fields.
@@ -2078,9 +2078,9 @@ modification of the contents of the document).
               possibly of degraded quality.\\
         \hline
     \end{tabular}
-    \caption{Flag bits and their short explaination.
+    \caption{Flag bits and their short explanation.
             Revision 2 is used when encryption key length is 40 bits or when PDF output
-            version is less than 1.5. Otherwise, Rivision 3 or greater is used.}\label{TABLE:flags}
+            version is less than 1.5. Otherwise, Revision 3 or greater is used.}\label{TABLE:flags}
 \end{table}
 
 The \option{-K} option can be used to specify the encryption key length.
@@ -2155,7 +2155,7 @@ The full \code{ChangeLog} entries can be viewed via the web interface of the
 \medskip
 
 There was an undocumented feature for supporting OpenType Layout but it was
-dropped. Simplified support for the OpenType Layout was intorduced instead.
+dropped. Simplified support for the OpenType Layout was introduced instead.
 
 
 %\renewcommand{\refname}{Further Reading}
