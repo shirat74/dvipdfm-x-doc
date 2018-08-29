@@ -102,7 +102,7 @@
   \begin{raggedleft}
     {\Huge\bfseries The Dvipdfmx User's Manual}\\[\baselineskip]
     \Large The Dvipdfmx Project Team\\
-    August 27, 2018\par
+    August 30, 2018\par
   \end{raggedleft}
 \end{titlepage}
 
@@ -267,17 +267,30 @@ Some part of this document is irrelevant for \XeTeX\ users.
 
 \subsection{p\TeX}
 p\TeX\ users are at least required to install several auxiliary files
-mentioned in the section of ``\hyperref[SEC:auxfiles]{Auxilary Files}''
+mentioned in the section of ``\hyperref[SEC:auxfiles]{Auxiliary Files}''
 and to setup font-mappings. Just install the \package{adobemappings} and
 \package{glyphlist} for auxiliary files. (As \TeX\ Live basic installation
 requires them, they are probably already installed for \TeX\ Live users.)
 
-Setting up fontmaps can be done easily with help of the \package{ptex-fontmaps}
-package. For example, to use with the IPA fonts (contained
-in the \package{ipaex} package), run,
+For \TeX\ Live users, setting up fontmaps can be easily done with the help
+of the \package{ptex-fontmaps} package and the \keyword{updmap} program.
+To use with the IPAex fonts (contained in the \package{ipaex} package), for
+example, run,
 \begin{lstlisting}
-updmap ipaex
+kanji-config-updmap --sys ipaex
 \end{lstlisting}
+where the \option{--sys} option indicates the system-wide configuration.
+After successful invocation of the above command, the IPAex fonts will
+be used by default. The current setting can be checked via,
+\begin{lstlisting}
+kanji-config-updmap --sys status
+\end{lstlisting}
+For more information on the updmap program, try,
+\begin{lstlisting}
+kanji-config-updmap --help
+\end{lstlisting}
+or refer the documentation of the updmap program.
+
 Alternatively, just for a quick test of installation, try the following:
 \begin{lstlisting}
 \documentclass{article}
@@ -295,22 +308,22 @@ the following \code{special} command,
 \AtBeginDocument{\special{pdf:tounicode 90ms-RKSJ-UCS2}}
 \end{lstlisting}
 in the preamble.
-The above \code{special} command instruct let \dvipdfmx\ to convert text encoded
+The above \code{special} command instructs \dvipdfmx\ to convert text encoded
 in Shift-JIS to Unicode. For EUC-JP, replace 90ms-RKJK-UCS2 with EUC-UCS2.
 
 \subsection{up\TeX}
 up\TeX\ users are basically the same as p\TeX\ users but there are two choices
-for setting fontmaps. Setup fontmaps as mentioned in the above for p\TeX, or use
-keyword \code{unicode} in the encoding field of fontmap files.
+for setting fontmaps. Setup fontmaps as mentioned above for p\TeX, or use
+keyword \code{unicode} in the encoding field of the fontmap file.
 
 The former might be easier as the auto-creation of fontmap files can be done
-with the \code{updmap} program and the \package{ptex-fontmaps} package. But in
-this method there are some difficulties when using a font which employs a character
-collection (glyph repertoire) other than Adobe-Japan1 in the case of PostScript
+with the updmap program and the \package{ptex-fontmaps} package. But in
+this method there are some difficulties when using fonts which employ character
+collections (glyph repertoire) other than Adobe-Japan\lnum{1} in the case of PostScript
 flavored OpenType fonts.
 In the later case, the \package{adobemappings} package is not required
-and newer PostScript flavored OpenType fonts which do not employ Adobe-Japan1
-can be used too.
+and newer PostScript flavored OpenType fonts which do not employ Adobe-Japan\lnum{1}
+can be easily used too.
 
 Using \code{unicode} is more simpler and intuitive thus it is recommended to
 use this method.\footnote{For \TeX\ Live 2017. Earlier versions have buggy
@@ -342,7 +355,7 @@ To use TrueType Arphic fonts provided by the \package{arphic-ttf} package:
 \usepackage{CJKutf8}
 ...Other packages loaded here...
 \AtBeginDocument{%
-  \special{pdf:tounicode UTF8-USC2}%
+  \special{pdf:tounicode UTF8-UCS2}%
   \special{pdf:mapline bsmiu@Unicode@ unicode bsmi00lp.ttf}%
  }
 \begin{document}
@@ -2102,7 +2115,7 @@ allowed,
   dvipdfmx -V 2.0 -S -K 256 -P 0x24 input.dvi
 \end{lstlisting}
 
-The default value for \option{K} is 40 and for \option{-P} is \code{0x003C0}
+The default value for \option{-K} is 40 and for \option{-P} is \code{0x003C0}
 (all bits from bit-position 3 to 6 set).
 
 \chapter{Compatibility}
