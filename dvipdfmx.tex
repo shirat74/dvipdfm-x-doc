@@ -262,7 +262,7 @@ This section is intended to be a quick guide for each users.
 \XeTeX\ users
 normally do not invoke the \dvipdfmx\ command directly. To control the
 behavior of \dvipdfmx, please consider using the \code{dvipdfmx:config}
-special explained in the section of ``\hyperref[SEC:specials]{Specials}.''
+special explained in the section of ``\hyperref[SEC:specials]{Specials}''.
 Some part of this document is irrelevant for \XeTeX\ users.
 
 \subsection{p\TeX}
@@ -404,7 +404,7 @@ want to install them but they are not required.
 
 CJK fonts usually contain several thousands of glyphs. For using such fonts
 with (original) \TeX, which can only handle 8-bit encodings, it is necessary to
-split a font into several ``subfonts''. Subfont Definition File (SFD)
+split a font into several \keyword{subfonts}. The Subfont Definition File (SFD)
 specify the way how those fonts are split into subfonts. \dvipdfmx\ uses SFD
 files to convert a set of subfonts back to a single font.
 
@@ -1130,7 +1130,7 @@ additional dictionary keys as an array object:
 
 If the name of conversion CMap contains one of the keywords RKSJ, \lnum{B5}, GBK, and KSC,
 PDF string objects are treated specially when they are parsed. A two byte sequence
-starting with the first byte's high bit set is treated ''as is'' so that
+starting with the first byte's high bit set is treated ``as is'' so that
 the \code{0x5c} byte appears in the second byte is not treated as an escape sequence.
 This behavior is not compliant to the PDF specification.
 
@@ -1139,7 +1139,7 @@ This behavior is not compliant to the PDF specification.
 This section shows several examples of special command usage.
 It is intended to be a hint for advanced users, so uninterested users can safely skip
 this section. In many cases, using \dvipdfmx\ PDF specials requires knowledge on PDF.
-Please refer to Adobe's ''PDF Reference''\cite{ADOBE}.
+Please refer to Adobe's ``PDF Reference''\cite{ADOBE}.
 
 \subsubsection{Annotations}
 
@@ -1714,7 +1714,7 @@ the encoding name for 8-bit encodings. For example, to specify the CMap ``UniJIS
 \end{lstlisting}
 
 For information on the Adobe Glyph List and PostScript CMap Resources, see,
-the section \ref{SEC:auxfiles}, ``Auxiliary Files.''
+the section \ref{SEC:auxfiles}, ``Auxiliary Files''.
 
 \subsection{Extended Syntax and Options}
 
@@ -1945,7 +1945,7 @@ In OpenType font format, information regarding how a font should be treated
 when creating a document can be recorded.%
 \footnote{See,
 ``\href{http://www.microsoft.com/typography/otspec/os2.htm}{OpenType Specification:
-OS/2 -- OS/2 and Windows Metrics Table}''.}
+OS/2 -- OS/2 and Windows Metrics Table}''}.
 \dvipdfmx\ uses this information to decide whether font embedding is permitted.
 
 This font licensing information is indicated by the flag called \code{fsType}
@@ -2174,7 +2174,7 @@ dropped. Simplified support for the OpenType Layout was introduced instead.
 %\renewcommand{\refname}{Further Reading}
 \renewcommand{\bibname}{Further Reading}
 \begin{thebibliography}{99}
-\bibitem{DVIPDFM}  ''\href{http://mirrors.ctan.org/dviware/dvipdfm/dvipdfm.pdf}%
+\bibitem{DVIPDFM} ``\href{http://mirrors.ctan.org/dviware/dvipdfm/dvipdfm.pdf}%
 {Dvipdfm User's Manual}'' written by Mark~A.~Wicks.
 \bibitem{ADOBE} Adobe's PDF References and a free copy of
 \lnum{ISO 32000-1:2008} standard are available from
@@ -2184,7 +2184,7 @@ on \href{http://www.adobe.com/devnet.html}{Adobe Developer Connection}.
 site:
 ``\href{http://www.microsoft.com/en-us/Typography/OpenTypeSpecification.aspx}%
 {OpenType Specification}''.
-\bibitem{PNGSPEC} ''\href{https://www.w3.org/TR/2003/REC-PNG-20031110/}%
+\bibitem{PNGSPEC} ``\href{https://www.w3.org/TR/2003/REC-PNG-20031110/}%
 {Portable Network Graphics (PNG) Specification (Second Edition)}''.
 \bibitem{CHOF} An article regarding DVI specials: Jin-Hwan Cho,
 ``\href{http://www.tug.org/TUGboat/tb30-1/tb94cho.pdf}{DVI specials for PDF generation}'',
