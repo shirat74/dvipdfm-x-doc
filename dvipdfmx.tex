@@ -102,7 +102,7 @@
   \begin{raggedleft}
     {\Huge\bfseries The Dvipdfmx User's Manual}\\[\baselineskip]
     \Large The Dvipdfmx Project Team\\
-    September 1, 2018\par
+    December 23, 2018\par
   \end{raggedleft}
 \end{titlepage}
 
@@ -967,7 +967,7 @@ where identifier and filename (specified as a PDF string object) are
 mandatory and a dictionary object, following the filename, which is to be added
 to the stream dictionary is optional.
 
-For example, to incorporate XMP Metadata stored from the file \code{test.xmp},
+For example, to incorporate XMP Metadata from a file \code{test.xmp},
 \begin{lstlisting}
 \special{pdf:fstream @xmp (test.xmp) <<
     /Type    /Metadata
@@ -1031,13 +1031,28 @@ pdf:mapline foo unicode bar
 pdf:mapfile foo.map
 \end{lstlisting}
 
-\subsubsection{Specifying The Output PDF Version}
+\subsubsection{Specifying Output PDF Version}
 
 \code{pdf:majorversion} and \code{pdf:minorversion} specials can be used to
 specify major and minor version of output PDF.
 \begin{lstlisting}
 pdf:minorversion 3
 \end{lstlisting}
+
+Please note that this command must appear on the first page,
+otherwise it will be ignored.
+
+\subsubsection{Custom File Identifiers}
+
+\newfeature{Addition in \TeX\ Live 2019}
+
+A custom file identifier (the \code{ID} entry in the trailer dictionary)
+can be specified via \code{pdf:trailerid} special as
+\begin{lstlisting}
+pdf:trailerid [(0123456789abcdef) (0123456789abcdef)]
+\end{lstlisting}
+An array of two 16-byte PDF string objects must be supplied as
+a file identifier. This special command must appear on the first page.
 
 \subsubsection{Encryption}
 
