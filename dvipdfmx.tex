@@ -102,7 +102,7 @@
   \begin{raggedleft}
     {\Huge\bfseries The Dvipdfmx User's Manual}\\[\baselineskip]
     \Large The Dvipdfmx Project Team\\
-    December 23, 2018\par
+    June 7, 2020\par
   \end{raggedleft}
 \end{titlepage}
 
@@ -116,14 +116,14 @@ The \dvipdfmx\ (formerly \dvipdfm-cjk) project provides an extended version of
 the \dvipdfm, a DVI to PDF translator developed by Mark~A.~Wicks.
 
 The primary goal of this project is to support multi-byte character encodings
-and large character sets such as for East Asian languages.
+and large character sets such as those for East Asian languages.
 This project started as a combined work of the \dvipdfm-jpn project by
 Shunsaku Hirata and its modified one, \dvipdfm-kor, by Jin-Hwan Cho.
 
 Extensions to \dvipdfm\ include,
 \begin{itemize}
-    \item Support for OpenType and TrueType font, including partial support
-    for the OpenType Layout for finding glyph variants and vertical writing.
+    \item Support for OpenType and TrueType fonts, including partial support
+    for OpenType Layout features for glyph variants and for vertical writing.
     \item Support for CJK-\LaTeX\ and H\LaTeX\ with Subfont Definition Files.
     \item Support for various legacy multi-byte encodings via PostScript CMap
      Resources.
@@ -136,7 +136,7 @@ Extensions to \dvipdfm\ include,
     conversion and PDF object stream.
     \item Advanced raster image support including alpha channels, embedded
     ICC profiles, 16-bit bit-depth colors, and so on.
-    \item Basic PDF password security support for PDF output.
+    \item Basic PDF password security support. (only for output)
 \end{itemize}
 Some important features are still missing:
 \begin{itemize}
@@ -157,7 +157,7 @@ development sources for \TeX\ Live, see,\medskip
 
 This document, ``The \dvipdfmx\ User's Manual'', was originally prepared for
 \TeX\ Live 2017. Current maintainer of this document is Shunsaku Hirata.
-Latest version and contact information can be found at:\medskip
+The latest version and contact information can be found at:\medskip
 
 \url{http://github.com/shirat74/dvipdfm-x-doc}
 \medskip
@@ -214,11 +214,12 @@ available from the CTAN site mentioned above for basic usage.
 
 Some additional command line options recognized by \dvipdfmx\ are listed in
 Table~\ref{TABLE:options}. In addition to this, the \code{-V} option for specifying
-the output PDF version now accepts the version specification of a form \code{2.0}. Try
+the output PDF version now accepts the version specification of a form \code{2.0}.
+Please try
 \begin{lstlisting}
 dvipdfmx --help
 \end{lstlisting}
-for the list of command line options and their explanations.
+for a (complete) list of command line options and their explanations.
 
 \begin{table}
     \centering
@@ -235,10 +236,16 @@ for the list of command line options and their explanations.
         flags.
         See, section of ``\hyperref[SEC:encryption]{Encryption Support}''.
         The default value is \code{0x003C}.\\
-        \code{-I} \textit{number} & Life of image cache in hours. By specifying
-        value \code{0} \dvipdfmx\ erases cached images, and value \code{-1}
-        erases all cached images and does not leave newly generated one. The
-        default value is \code{-2}. (ignore image cache) \\
+        \code{-I} \textit{number} & Life of image cache in hours, relevant only when
+        an image not directly supported by \dvipdfmx\ is used and thus an external
+        program is invoked to convert it to a PDF format intermediate file.
+        This option basically specifies how long such intermediate files are preserved
+        and are reused (to avoid an external program is invoked again and again whenever
+        \dvipdfmx\ tries to include images)
+        By specifying a value of \code{0}, \dvipdfmx\ erases existing cached images,
+        and the value \code{-1} tells \dvipdfmx\ to erase all cached images and not to
+        leave newly generated one. And \code{-2} indicates ``ignore image cache``.
+        The default value is \code{-2}.\\
         \code{-M} & Process \MP\ generated PostScript file.\\
         \code{-E} & Always try to embed fonts \emph{regardless of
         licensing}.\\
@@ -252,10 +259,12 @@ for the list of command line options and their explanations.
 
 \section{Quick Guide}
 
-\dvipdfmx\ is supposed to be used by users of \LaTeX\ packages for typesetting
-CJK languages like H\LaTeX\ and CJK-\LaTeX, and \TeX\ variants such as \XeTeX,
-p\TeX, and up\TeX.
-This section is intended to be a quick guide for each users.
+As the primary goal of \dvipdfmx\ is to support multi-byte character encodings
+and large character sets, its primary users are expected to be users of
+\LaTeX\ packages for typesetting CJK languages such as H\LaTeX\ and CJK-\LaTeX,
+and users of an extended \TeX\ variant which is capable of handling those
+languages, like \XeTeX, p\TeX, and up\TeX.
+This section provides a ``Quick Guide'' for those users.
 
 \subsection{\texorpdfstring{\XeTeX}{XeTeX}}
 
@@ -371,10 +380,10 @@ Here, \code{pdf:mapline} special is used to setup a font-mapping.
 This section is mostly for supporting legacy encodings and legacy font format
 such as PostScript Type1 font. \XeTeX\ users may skip this section.
 
-\dvipdfmx\ has a capacity to handle various input encodings from 7-bit
-encodings to variable-width multi-byte encodings. It also has some sort of
-Unicode support. Several auxiliary files which are not common to \TeX\ users
-are needed to enable those features. This section shortly describes about them.
+\dvipdfmx\ can handle various input encodings, from 7-bit encodings to variable-width
+multi-byte encodings. It also has some sort of Unicode support.
+Several auxiliary files which are not common to \TeX\ users are needed to utilize those
+features. This section shortly describes about those auxiliary files.
 
 \subsection{PostScript CMap Resources}
 
@@ -453,15 +462,16 @@ This section gives a quick overview of \dvipdfmx's extended capabilities.
 \subsection{CJK Support}
 
 There are many extensions made for supporting CJK languages. Features described
-here is mainly for CJK languages but their use is actually not limited to it.
-Those features are implemented in a generic way so that it can be beneficial to
-users who are not involved in CJK languages.
+here are mainly for CJK languages. However, those features are implemented in a
+more generic way and hence they can be also beneficial to users who are not
+involved in CJK languages.
 
 \subsubsection{Legacy Multi-byte Encodings}
 
-\dvipdfmx\ has an extensible support for encodings by means of
-PostScript CMap Resources. Just like \code{enc} files are written for 8-bit
-encodings, one can write their own CMap files to support custom encodings.
+\dvipdfmx\ has an extensible support for multi-byte encodings by means of PostScript
+CMap Resources. Just like various 8-bit encodings can be supported via \code{enc} file,
+various multi-byte encodings (including custom one) can be supported by preparing
+CMap files.
 See, Adobe's technical notes\cite{ADOBE} for details on PostScript CMap Resources.
 
 \subsubsection{Vertical Writing}
@@ -481,14 +491,15 @@ left and right corner brackets are replaced with their vertical counterparts.}%
 \subsection{Unicode Support}
 
 Unicode support here consists of two parts: Supporting Unicode as an input
-encoding and making output PDF files ``Unicode aware''.
+encoding and making output PDF files ``Unicode aware'' (``ToUnicode CMap Support'').
 
 \subsubsection{Unicode as Input Encoding}
 
-\dvipdfmx\ recognizes an additional keyword \code{unicode} in fontmap files
-to declare that Unicode values are used in the input DVI file. Unicode support is
+\dvipdfmx\ recognizes an additional keyword \code{unicode} in the encoding entry of
+fontmap file, which declares that character code used in input DVI files for fonts
+with this keyword specified should be regarded as Unicode values. Unicode support is
 basically limited to the Basic Multilingual Plane (BMP) since there are no
-support for code ranges that requires more than three bytes in TFM and extended
+support for code ranges that requires more than two bytes in TFM and extended
 TFM formats.
 
 \subsubsection{ToUnicode CMap Support}
@@ -1049,10 +1060,13 @@ otherwise it will be ignored.
 A custom file identifier (the \code{ID} entry in the trailer dictionary)
 can be specified via \code{pdf:trailerid} special as
 \begin{lstlisting}
-pdf:trailerid [(0123456789abcdef) (0123456789abcdef)]
+pdf:trailerid [
+  <00112233445566778899aabbccddeeff>
+  <00112233445566778899aabbccddeeff>
+]
 \end{lstlisting}
-An array of two 16-byte PDF string objects must be supplied as
-a file identifier. This special command must appear on the first page.
+An array of two 16-byte PDF string objects (hexadecimal notion is used in the above example)
+must be supplied as a file identifier. This special command must appear on the first page.
 
 \subsubsection{Encryption}
 
