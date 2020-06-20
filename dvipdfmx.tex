@@ -237,10 +237,10 @@ for a (complete) list of command line options and their explanations.
         See, section of ``\hyperref[SEC:encryption]{Encryption Support}''.
         The default value is \code{0x003C}.\\
         \code{-I} \textit{number} & Life of image cache in hours, relevant only when
-        an image not directly supported by \dvipdfmx\ is used and thus an external
+        an image not directly supported by \dvipdfmx\ is used thus an external
         program is invoked to convert it to a PDF format intermediate file.
         This option basically specifies how long such intermediate files are preserved
-        and are reused (to avoid an external program is invoked again and again whenever
+        and reused. (to avoid an external program is invoked again and again whenever
         \dvipdfmx\ tries to include images)
         By specifying a value of \code{0}, \dvipdfmx\ erases existing cached images,
         and the value \code{-1} tells \dvipdfmx\ to erase all cached images and not to
@@ -262,7 +262,7 @@ for a (complete) list of command line options and their explanations.
 As the primary goal of \dvipdfmx\ is to support multi-byte character encodings
 and large character sets, its primary users are expected to be users of
 \LaTeX\ packages for typesetting CJK languages such as H\LaTeX\ and CJK-\LaTeX,
-and users of an extended \TeX\ variant which is capable of handling those
+and users of extended \TeX\ variants which is capable of handling those
 languages, like \XeTeX, p\TeX, and up\TeX.
 This section provides a ``Quick Guide'' for those users.
 
@@ -375,86 +375,6 @@ To use TrueType Arphic fonts provided by the \package{arphic-ttf} package:
 \end{lstlisting}
 Here, \code{pdf:mapline} special is used to setup a font-mapping.
 
-\section{Auxiliary Files}\label{SEC:auxfiles}
-
-This section is mostly for supporting legacy encodings and legacy font format
-such as PostScript Type1 font. \XeTeX\ users may skip this section.
-
-\dvipdfmx\ can handle various input encodings, from 7-bit encodings to variable-width
-multi-byte encodings. It also has some sort of Unicode support.
-Several auxiliary files which are not common to \TeX\ users are needed to utilize those
-features. This section shortly describes about those auxiliary files.
-
-\subsection{PostScript CMap Resources}
-
-\keyword{PostScript CMap Resources}\footnote{See,
-``\href{http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5014.CIDFont\_Spec.pdf}%
-{Adobe CMap and CIDFont Files Specification}''}
-are required for supporting legacy encodings such as Shift-JIS, EUC-JP, \lnum{Big5},
-and other East Asian encodings. \dvipdfmx\ internally identifies glyphs with
-identifiers (CIDs\footnote{PostScript terminology ``Character IDentifier''.})
-represented as an integer ranging from 0 to 65535 in the CID-based glyph access.
-PostScript CMap Resources describes the mapping between sequences of input
-character codes and CIDs. \dvipdfmx\ has an extensible support for multi-byte
-encodings via PostScript CMap Resources.
-
-CMap files for standard East Asian encodings, for use with Adobe's character
-collections, are included in the \package{adobemapping} package.
-The latest version of those CMap files maintained by Adobe can be found at
-Adobe's GitHub Project page:\medskip
-
-\url{http://github.com/adobe-type-tools/cmap-resources}
-\medskip
-
-Those files are mandatory for supporting p\TeX. up\TeX\ users may also
-want to install them but they are not required.
-
-\subsection{Subfont Definition Files}
-
-CJK fonts usually contain several thousands of glyphs. For using such fonts
-with (original) \TeX, which can only handle 8-bit encodings, it is necessary to
-split a font into several \keyword{subfonts}. The Subfont Definition File (SFD)
-specify the way how those fonts are split into subfonts. \dvipdfmx\ uses SFD
-files to convert a set of subfonts back to a single font.
-
-SFD files are not required for use with \TeX\ variants which can handle
-multi-byte character encodings and large character sets such as p\TeX,
-up\TeX,\XeTeX, and Omega.
-H\LaTeX\ and CJK-\LaTeX\ users are required to have those files to be
-installed. SFD files are available as a part of the \package{ttfutils} package
-for \TeX\ Live users.
-
-\subsection{The Adobe Glyph List and ToUnicode Mappings}
-
-The Adobe Glyph List\footnote{See,
-``\href{http://github.com/adobe-type-tools/agl-specification}{Adobe Glyph List Specification}''}
-(AGL) describes correspondence between PostScript glyph names (e.g., \code{AE},
-\code{Aacute},...) and Unicode character sequences representing them.
-Some features described in the section ``Unicode Support'' requires AGL file.
-
-\dvipdfmx\ looks for the file \code{glyphlist.txt} when conversion from
-PostScript glyph names to Unicode sequences is necessary.
-This conversion is done in various situations; when creating ToUnicode CMaps
-for 8-bit encoding fonts, finding glyph descriptions from TrueType and OpenType
-fonts when the font itself does not provide a mapping from PostScript glyph
-names to glyph indices (version 2.0 ``post'' table), and when the encoding
-\code{unicode} is specified for Type1 font.
-
-The AGL file is included in the \package{glyphlist} package. The latest version
-can be found at Adobe's GitHub site:\medskip
-
-\url{http://github.com/adobe-type-tools/agl-aglfn}
-\medskip
-
-ToUnicode Mappings are similar to AGL but they describe correspondence
-between CID numbers (instead of glyph names) and Unicode values.
-The content of those files are the same as CMap Resources.
-They are required when using TrueType fonts emulated as a CID-keyed font.
-They should be found in the same directory as ordinary CMap files.
-
-ToUnicode Mapping files are included in the \package{adobemapping} package.
-Those files are not required for \XeTeX\ users.
-
 \section{Overview of Extensions}
 
 This section gives a quick overview of \dvipdfmx's extended capabilities.
@@ -527,6 +447,86 @@ There are various other improvements over \dvipdfm. The most notable one is
 more improved PDF input and output support: The cross-reference stream and
 object stream introduced in \lnum{PDF-1.5} are also supported.
 
+\chapter{Auxiliary Files}\label{SEC:auxfiles}
+
+This chapter describes various auxiliary files required for supporting legacy encodings
+and legacy font format such as PostScript Type1 font.
+\XeTeX\ users may skip this chapter.
+
+\dvipdfmx\ can handle various input encodings, from 7-bit encodings to variable-width
+multi-byte encodings. It also has some sort of Unicode support.
+Several auxiliary files which are not common to \TeX\ users are needed to utilize those
+features. This chapter shortly describes about those auxiliary files.
+
+\subsection{PostScript CMap Resources}
+
+\keyword{PostScript CMap Resources}\footnote{See,
+``\href{http://www.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/5014.CIDFont\_Spec.pdf}%
+{Adobe CMap and CIDFont Files Specification}''}
+are required for supporting legacy encodings such as Shift-JIS, EUC-JP, \lnum{Big5},
+and other East Asian encodings. \dvipdfmx\ internally identifies glyphs with
+identifiers (CIDs\footnote{PostScript terminology ``Character IDentifier''.})
+represented as an integer ranging from 0 to 65535 in the CID-based glyph access.
+PostScript CMap Resources describes the mapping between sequences of input
+character codes and CIDs. \dvipdfmx\ has an extensible support for multi-byte
+encodings via PostScript CMap Resources.
+
+CMap files for standard East Asian encodings, for use with Adobe's character
+collections, are included in the \package{adobemapping} package.
+The latest version of those CMap files maintained by Adobe can be found at
+Adobe's GitHub Project page:\medskip
+
+\url{http://github.com/adobe-type-tools/cmap-resources}
+\medskip
+
+Those files are mandatory for supporting p\TeX. up\TeX\ users may also
+want to install them but they are not required.
+
+\subsection{Subfont Definition Files}
+
+CJK fonts usually contain several thousands of glyphs. For using such fonts
+with (original) \TeX, which can only handle 8-bit encodings, it is necessary to
+split a font into several \keyword{subfonts}. The Subfont Definition File (SFD)
+specify the way how those fonts are split into subfonts. \dvipdfmx\ uses SFD
+files to convert a set of subfonts back to a single font.
+
+SFD files are not required for use with \TeX\ variants which can handle
+multi-byte character encodings and large character sets such as p\TeX,
+up\TeX,\XeTeX, and Omega.
+H\LaTeX\ and CJK-\LaTeX\ users are required to have those files to be
+installed. SFD files are available as a part of the \package{ttfutils} package
+for \TeX\ Live users.
+
+\subsection{The Adobe Glyph List and ToUnicode Mappings}
+
+The Adobe Glyph List\footnote{See,
+``\href{http://github.com/adobe-type-tools/agl-specification}{Adobe Glyph List Specification}''}
+(AGL) describes correspondence between PostScript glyph names (e.g., \code{AE},
+\code{Aacute},...) and Unicode character sequences representing them.
+Some features described in the section ``Unicode Support'' requires AGL file.
+
+\dvipdfmx\ looks for the file \code{glyphlist.txt} when conversion from
+PostScript glyph names to Unicode sequences is necessary.
+This conversion is done in various situations; when creating ToUnicode CMaps
+for 8-bit encoding fonts, finding glyph descriptions from TrueType and OpenType
+fonts when the font itself does not provide a mapping from PostScript glyph
+names to glyph indices (version 2.0 ``post'' table), and when the encoding
+\code{unicode} is specified for Type1 font.
+
+The AGL file is included in the \package{glyphlist} package. The latest version
+can be found at Adobe's GitHub site:\medskip
+
+\url{http://github.com/adobe-type-tools/agl-aglfn}
+\medskip
+
+ToUnicode Mappings are similar to AGL but they describe correspondence
+between CID numbers (instead of glyph names) and Unicode values.
+The content of those files are the same as CMap Resources.
+They are required when using TrueType fonts emulated as a CID-keyed font.
+They should be found in the same directory as ordinary CMap files.
+
+ToUnicode Mapping files are included in the \package{adobemapping} package.
+Those files are not required for \XeTeX\ users.
 
 \chapter{Graphics}\label{SEC:graphics}
 
@@ -654,21 +654,19 @@ streams and object streams introduced in \lnum{PDF-1.5}.
 \dvipdfmx\ also supports inclusion of PDF pages other than the first page.
 However, tagged PDF may cause problems and annotations are not kept.
 
-As there are no clear way to determine the natural extent of the graphics content
-to be clipped, \dvipdfmx\ preferably try to find the \emph{crop box} to decide
-image size. If there are no crop box \emph{explicitly} specified,%
-\footnote{There are some accusations by Japanese \TeX\ users as
-''violating the PDF spec.'' regarding this point. However, what we are
-talking about is how to guess the \emph{natural} or \emph{intended} size of
-images but not the default value of the PDF crop box itself.} then it
-tries to refer other boundary boxes such as the \emph{art box}. If there are no
-possible boundaries of the graphics content explicitly specified, the \emph{media box},
-which is the boundaries of the physical medium on which the page is to be printed,
-is used as the last resort.
+As there is no clear way to determine the natural extent of a graphics contents
+to be clipped, \dvipdfmx\ first try to find if there is any \emph{crop box}
+explicitly specified, to determine image size. If not, then it tries to refer
+other boundary boxes such as the \emph{art box} which can be used for defining
+the extent of the page's meaningful content as suggested by the PDF Reference.\cite{ADOBE}
+If there is no such page boundaries explicitly specified, useful for estimating
+the intended size of the graphics contents, the \emph{media box}, which is the
+boundaries of the physical medium on which the page is to be printed, is used as
+the last resort.
 
 The \code{pdf:image} special supports additional keys, ``\code{page}'' and
 ``\code{pagebox}''. The \code{page} key takes an integer value representing
-the page number of PDF page to be included, and the \code{pagebox} takes one
+the page number of the PDF page to be included, and the \code{pagebox} takes one
 of the keywords \code{mediabox}, \code{cropbox}, \code{artbox}, \code{bleedbox},
 or \code{trimbox} for selecting page's boundary box to be used. For example,
 \begin{lstlisting}
@@ -1869,7 +1867,7 @@ use of it is deprecated.
 
 \subsection{Specifying Unicode Plane}
 
-As there are no existing TFM formats supporting 3-byte or 4-byte character
+As there is no existing TFM format supporting 3-byte or 4-byte character
 encodings, the only way to use Unicode characters other than the BMP is to
 map the code range 0-65535 to different planes via (e.g., to plane 1)
 the \option{-p 1} fontmap option. This option is
