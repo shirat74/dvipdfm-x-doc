@@ -975,6 +975,7 @@ information on PDF specials.
 Several \code{special} commands are added for more flexible PDF generation:
 creation of arbitrary stream objects, controlling \dvipdfmx\ behavior, and some
 specials which might be useful for graphics drawing.
+In this section, new special commands added to \dvipdfmx\ are explained.
 
 \subsubsection{PDF Object Manipulation}
 
@@ -1126,7 +1127,7 @@ It is not always guaranteed to work as `expected'.
 
 \newfeature{20200627}
 
-Color support of \dvipdfmx\ is extended so that various color models can be used more easily.
+Color support is extended so that various color models can be used easily.
 The \code{pdf:bcolor} special accepts an object reference defining color space.
 The following is a simple example for defining and using \keyword{Indexed} color space.
 \begin{lstlisting}
@@ -1151,12 +1152,12 @@ The following is a simple example for defining and using \keyword{Indexed} color
 
 \newfeature{20200711}
 
-For changing the graphics state tempolarily, \code{pdf:bxgstate} and \code{pdf:exgstate} special commands can be used.
-The \code{pdf:bxgstate} operator, which takes a \keyword{graphics state parameter dictionary} as the argument,
+For changing the graphics state temporarily, \code{pdf:bxgstate} and \code{pdf:exgstate} special commands can be used.
+The \code{pdf:bxgstate} command, which takes a \keyword{graphics state parameter dictionary} as the argument,
 starts modification to the graphics state and the corresponding \code{pdf:exgstate} ends the graphics state change.
 As in the color spacial, a page break can appear inside of a \code{pdf:bxgstate} and \code{pdf:exgstate} pair and they can be nested.
 
-The following example is for using transparency.
+The simplest example of its usage is transparency.
 
 %%EXAMPLE: ExtGState: Transparency
 \begin{figure}[ht]
@@ -1231,10 +1232,10 @@ This behavior is not compliant to the PDF specification.
 
 \subsection{PDF Special Examples}
 
-This section shows several examples of special command usage.
+This section shows several examples of using special commands.
 It is intended to be a hint for advanced users, so uninterested users can safely skip
-this section. In many cases, using \dvipdfmx\ PDF specials requires knowledge on PDF.
-Please refer to Adobe's ``PDF Reference''\cite{ADOBE}.
+this section. In many cases, using \dvipdfmx\ PDF specials requires knowledge on the PDF specification.
+For the detailed information on PDF, please refer to Adobe's ``PDF Reference''\cite{ADOBE}.
 
 \subsubsection{Annotations}
 
@@ -1392,9 +1393,9 @@ at least for the following standard icons: \code{Graph}, \code{PushPin},
 
 Color support is extended in \dvipdfmx\ to support various color spaces such as
 \keyword{Separation} and \keyword{Tiling Pattern}.
+A few examples illustrating typical usage of the exntended color commands are shown in this section.
 
-The first example is separation colors which illustrates a typical usage of this feature.
-In the example below, the first four special commands define two color spaces,
+The first one is \keyword{Separation} color spaces:
 %%EXAMPLE: Separation Color Space
 \special{pdf:stream @TintTransform1
   ({0 exch dup 0.62 mul exch 0})
@@ -1453,18 +1454,22 @@ and
 and
 \special{pdf:bcolor @Green 1.0}Green\special{pdf:ecolor}
 \end{lstlisting}
-\code{TintTransform}'s defined here are functions for transforming
-\keyword{tint} values into approximate colors in the
-\keyword{alternate color space}
-(\code{DeviceCMYK} in this example). PostScript calculator functions are used
-for converting a single component value representing ``Orange'' or ``Green''
-into four component CMYK values to approximate those colors. The ``Orange''
-color $v$ is approximated as $(0, 0.62v, v, 0)$ in CMYK color space for
-alternate display here.
+The first four special commands declare two color spaces \code{Orange} and \code{Green}.
+They are single component color spaces with color values representing \keyword{tint} values
+of each colorant, which are identified by its names, ``Orange'' and ``Green''.
 
-Tiling patterns can also be used with this extended color support.
-We start with the definition of the \keyword{pattern cell}, which defines the
-appearance of the cell used for tiling, and declaration of the color space resource.
+The definition of Separation color spaces includes necessary information for approximating
+colors when the given colorant name associated with that space does not correspond to a colorant
+available on the device rendering the content of the PDF file.
+\code{TintTransform}'s defined via \code{pdf:stream} commands above are functions for transforming tint values
+into approximate colors in the \keyword{alternate color space} (\code{DeviceCMYK} in this example).
+PostScript calculator functions are used for converting a single component value representing
+``Orange'' or ``Green'' into four component CMYK values to approximate those colors. The ``Orange''
+color $v$ is approximated as $(0, 0.62v, v, 0)$ in CMYK color space for alternate display here.
+
+Tiling patterns can also be used with this extended color command.
+To illustrate its usage, we start with the definition of the \keyword{pattern cell},
+which defines the appearance of the cell used for tiling, followed by the declaration of the color space resource.
 \begin{lstlisting}
 \special{pdf:stream @MyPattern
   (.16 0 0 .16 0 0 cm 4 w 50 0 m 100 50 l 50 100 l 0 50 l f)
@@ -1483,14 +1488,11 @@ appearance of the cell used for tiling, and declaration of the color space resou
 }
 \special{pdf:obj @Pattern [/Pattern /DeviceRGB]}
 \end{lstlisting}
-The above example defines a pattern cell which is simply a diamond.
-The stream object with the content stream using painting operators,
-\code{m} for ``move-to'', \code{l} for ``line-to'', and \code{f} for ``fill'',
-is used to render a diamond shaped pettern cell.
+The above example defines a pattern cell which is just a diamond shaped figure.
 
 Then, with the following code,
 \begin{lstlisting}
-\special{pdf:bcolor @Pattern [0.8 0.3 0.3 @MyPattern]}%
+\special{pdf:bcolor @Pattern [1 0.38 0 @MyPattern]}
 \special{pdf:content 0 0 320 100 re f}
 \special{pdf:ecolor}
 \end{lstlisting}
@@ -1514,14 +1516,14 @@ a box filled with the tiling pattern defined above is drawn.
 \raisebox{-100bp}[0bp][100bp]{%
 \makebox[320bp][l]{%
 \special{pdf:obj @Pattern [/Pattern /DeviceRGB]}%
-\special{pdf:bcolor @Pattern [0.8 0.3 0.3 @MyPattern]}
+\special{pdf:bcolor @Pattern [1 0.38 0 @MyPattern]}
 \special{pdf:content
     0 0 320 100 re f
 }}%
 \special{pdf:ecolor}}%
 \end{center}
-Note that for this \keyword{uncolored} tiling pattern which has no inherent color, color values
-are also specified along with the pattern resource to be used.
+For this \keyword{uncolored} tiling pattern having no inherent color, color values
+are also specified along with the reference to the pattern resource \code{@MyPatter} to be used.
 
 \subsubsection{Shading Patterns}
 
@@ -1658,7 +1660,7 @@ Exponential interpolation is used to interpolate the colors between them with th
   >>
 >>}
 \end{lstlisting}
-Then it is used as a mask to compose the background (a rectangle filled with gray color) and
+Then, it is used as a mask to compose the background (a rectangle filled with gray color) and
 foreground (text generated by \package{lipsum} package) images.
 \begin{lstlisting}
 \special{pdf:bcontent}
@@ -1753,7 +1755,7 @@ character encodings for East Asian languages.
 \section{Font Mappings}
 
 The Syntax of font-mapping (fontmap) files is basically the same as in \dvipdfm.
-There are few extensions available in \dvipdfmx. In addition to the 8-bit \code{enc}
+There are a few extensions available in \dvipdfmx. In addition to the 8-bit \code{enc}
 file and keywords \code{builtin} and \code{none}, \dvipdfmx\ accepts a PostScript CMap
 Resource name and the keyword \code{unicode} in the encoding field.
 
@@ -1785,7 +1787,7 @@ the section \ref{SEC:auxfiles}, ``Auxiliary Files''.
 
 \subsection{Extended Syntax and Options}
 
-Few options are available in \dvipdfmx\ in addition to the original dvipdfm's
+Several options are available in \dvipdfmx\ in addition to the original dvipdfm's
 one. Please note that all features which makes \dvipdfmx\ to use
 non-embedded fonts are deprecated, as by doing so it makes \dvipdfmx\ to create
 PDF files which can be non-compliant to the ISO standards.
