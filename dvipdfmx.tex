@@ -973,7 +973,7 @@ information on PDF specials.
 \subsection{Additions to PDF Specials}
 
 Several \code{special} commands are added for more flexible PDF generation:
-creation of arbitrary stream objects, controlling \dvipdfmx\ behavior, and some
+creation of stream objects, controlling \dvipdfmx\ behavior, and some
 specials which might be useful for graphics drawing.
 In this section, new special commands added to \dvipdfmx\ are explained.
 
@@ -1152,10 +1152,10 @@ The following is a simple example for defining and using \keyword{Indexed} color
 
 \newfeature{20200711}
 
-For changing the graphics state temporarily, \code{pdf:bxgstate} and \code{pdf:exgstate} special commands can be used.
+For changing the graphics state temporarily, the \code{pdf:bxgstate} and \code{pdf:exgstate} special commands can be used.
 The \code{pdf:bxgstate} command, which takes a \keyword{graphics state parameter dictionary} as the argument,
-starts modification to the graphics state and the corresponding \code{pdf:exgstate} ends the graphics state change.
-As in the color spacial, a page break can appear inside of a \code{pdf:bxgstate} and \code{pdf:exgstate} pair and they can be nested.
+starts modification to the graphics state and the corresponding \code{pdf:exgstate} ends the state change.
+A page break can occur inside of a \code{pdf:bxgstate} and \code{pdf:exgstate} pair and they can be nested.
 
 The simplest example of its usage is transparency.
 
@@ -1273,49 +1273,23 @@ be shown on the side margin. Here, dictionary entry \code{T} is for the tilte,
 \code{Subj} for the subject of this annotation, and \code{Contents} for
 the text string to be shown in the body of this annotation.
 
-Likewise, \keyword{Rubber Stamp Annotation}, which places a rubber stamp
-as follows,
-\begin{center}
-\specialbox{150bp}{50bp}{pdf:ann width 150bp height 50bp
-  <<
-     /Type     /Annot
-     /Subtype  /Stamp
-     /Name     /Approved
-  >>
-}
-\end{center}
-
-\begin{lstlisting}
-\special{pdf:ann width 150bp height 50bp
-  <<
-     /Type     /Annot
-     /Subtype  /Stamp
-     /Name     /Approved
-  >>
-}
-\end{lstlisting}
-Other keywords such as \code{Expired}, \code{Final}, \code{Draft}, and so on,
-can be used in place of \code{Approved}.
-
-One can create a stamp of their own style. For this purpose, other specials
-\code{pdf:bxobj} and \code{pdf:exobj} can be used for designing a stamp.
-Those specials ``capture'' all typeset material enclosed by them into a PDF
+The second example is a \keyword{Stamp} annotation.
+In this example, an image created by \code{pdf:bxobj} and \code{pdf:exobj} on-the-fly
+is used as a stamp. Those specials ``capture'' all typeset material enclosed by them into a PDF
 \keyword{Form XObject}, which is a reusable graphics object like included images.
-
-For a simple example,
 \begin{lstlisting}
 \special{pdf:bxobj @MyStamp
-             width 280pt height 0pt depth 40pt}
-\addfontfeature{Scale=4,Color=FF9933}My Own Stamp
+          width 165pt height 0pt depth 40pt}
+\addfontfeature{Scale=4,Color=FF9933}Approved
 \special{pdf:exobj}
 \end{lstlisting}
-It captures typeset material ``My Own Stamp'' (this example uses \code{fontspec}
-package's command for changing font size and text color) into the object labeled as
-\code{MyStamp} for later reuse.
+It captures typeset material ``Approved'' (this example uses \code{fontspec}
+package's command for changing font size and text color) into an object labeled as
+\code{MyStamp} for later use.
 Then, \code{AP} (\keyword{appearance dictionary}) entry for controlling the appearance
 of annotations is used as,
 \begin{lstlisting}
-\special{pdf:ann width 280pt height 40pt
+\special{pdf:ann width 165pt height 40pt
   <<
     /Type    /Annot
     /Subtype /Stamp
@@ -1327,15 +1301,15 @@ The image captured into the object \code{MyStamp} is used as ``Normal''
 (\code{AP} dictionary entry \code{N}) appearance.
 (\code{R} for ``Rollover'' and \code{D} for ``Down'' can be used.)
 
-\parbox[t][0pt][c]{280pt}{%
-\special{pdf:bxobj @MyStamp width 280pt height 0pt depth 40pt}%
-\addfontfeature{Scale=4,Color=FF9933}My Own Stamp%
+\parbox[t][0pt][c]{165pt}{%
+\special{pdf:bxobj @MyStamp width 165pt height 0pt depth 40pt}%
+\addfontfeature{Scale=4,Color=FF9933}Approved%
 \special{pdf:exobj}%
 }%
 
 The result is:
 \begin{center}
-\specialbox{280bp}{40bp}{pdf:ann width 280pt height 40pt
+\specialbox{165bp}{40bp}{pdf:ann width 165pt height 40pt
   <<
     /Type    /Annot
     /Subtype /Stamp
@@ -1391,9 +1365,9 @@ at least for the following standard icons: \code{Graph}, \code{PushPin},
 
 \subsubsection{Special Color Space}
 
-Color support is extended in \dvipdfmx\ to support various color spaces such as
-\keyword{Separation} and \keyword{Tiling Pattern}.
-A few examples illustrating typical usage of the exntended color commands are shown in this section.
+Color support is extended in \dvipdfmx\ so that various color spaces such as
+\keyword{Separation} and \keyword{Tiling Pattern} can be used more easily.
+A few examples which illustrate typical use of the exntended color commands are shown in this section.
 
 The first one is \keyword{Separation} color spaces:
 %%EXAMPLE: Separation Color Space
@@ -1454,21 +1428,22 @@ and
 and
 \special{pdf:bcolor @Green 1.0}Green\special{pdf:ecolor}
 \end{lstlisting}
-The first four special commands declare two color spaces \code{Orange} and \code{Green}.
-They are single component color spaces with color values representing \keyword{tint} values
-of each colorant, which are identified by its names, ``Orange'' and ``Green''.
+The first four special commands declare two color spaces.
+They are single component color spaces whose color values represent \keyword{tint} values
+of the colorants identified by their names, ``Orange'' and ``Green''.
 
-The definition of Separation color spaces includes necessary information for approximating
-colors when the given colorant name associated with that space does not correspond to a colorant
-available on the device rendering the content of the PDF file.
-\code{TintTransform}'s defined via \code{pdf:stream} commands above are functions for transforming tint values
+The definition of a Separation color space includes a colorant name and information necessary for
+emulating colors when the colorant name associated with the space does not correspond to a colorant
+available on the device where the content of the PDF file is rendered.
+The \code{TintTransform}'s defined via \code{pdf:stream} commands are functions for transforming tint values
 into approximate colors in the \keyword{alternate color space} (\code{DeviceCMYK} in this example).
-PostScript calculator functions are used for converting a single component value representing
-``Orange'' or ``Green'' into four component CMYK values to approximate those colors. The ``Orange''
-color $v$ is approximated as $(0, 0.62v, v, 0)$ in CMYK color space for alternate display here.
+The contents of those stream objects are pieces of PostScript code which takes a number as input and outputs
+four numbers. They are used for converting a single component value representing ``Orange'' or ``Green'' into
+four component CMYK values to approximate those colors.
+The ``Orange'' color $v$ in this example is approximated as $(0, 0.62v, v, 0)$ in CMYK color space for alternate display.
 
-Tiling patterns can also be used with this extended color command.
-To illustrate its usage, we start with the definition of the \keyword{pattern cell},
+A tiling pattern can also be specified as a argument for the extended color command.
+To see it's use, we start with the definition of the \keyword{pattern cell},
 which defines the appearance of the cell used for tiling, followed by the declaration of the color space resource.
 \begin{lstlisting}
 \special{pdf:stream @MyPattern
@@ -1488,7 +1463,7 @@ which defines the appearance of the cell used for tiling, followed by the declar
 }
 \special{pdf:obj @Pattern [/Pattern /DeviceRGB]}
 \end{lstlisting}
-The above example defines a pattern cell which is just a diamond shaped figure.
+This example defines a pattern cell which is just a diamond shaped figure.
 
 Then, with the following code,
 \begin{lstlisting}
@@ -1523,15 +1498,15 @@ a box filled with the tiling pattern defined above is drawn.
 \special{pdf:ecolor}}%
 \end{center}
 For this \keyword{uncolored} tiling pattern having no inherent color, color values
-are also specified along with the reference to the pattern resource \code{@MyPatter} to be used.
+are also specified along with the reference to the pattern resource \code{MyPattern} to be used.
 
 \subsubsection{Shading Patterns}
 
-This section describes examples of using \keyword{Shading Pattern}.
-Examples in this section have a common structure. They consist of essentially three parts.
-The first part is for defining pattern itself.
+The next example is \keyword{Shading Pattern}.
+Examples in this section basically consist of three parts.
+The first part is definition of a shading pattern itself.
 PDF object creation commands like \code{pdf:obj} and \code{pdf:stream} are used for this purpose.
-Next is registering color space resources in the page's \keyword{Resource Dictionary}.
+Next is for registering color space resources in the page's \keyword{Resource Dictionary}.
 It can be done via \code{pdf:put} command as,
 \begin{lstlisting}
 \special{pdf:put @resource <<
@@ -1544,7 +1519,7 @@ Finally, graphics objects are placed, with or with a combination of text and,
 PDF drawing operators inserted by the \code{pdf:code} or the \code{pdf:contents} special.
 
 %%EXAMPLE: Shading
-The following example is a simple lenear-gradient.
+A simple lenear-gradient can be drawn as,
 \begin{lstlisting}
 \special{pdf:obj @SH01 <<
   /ShadingType 2
@@ -1559,7 +1534,7 @@ The following example is a simple lenear-gradient.
 \special{pdf:content 0 0 320 20 re W n /SH01 sh}
 \end{lstlisting}
 where the ``Orange'' separation color space defined before is used again.
-This example shows an axial shading (\code{ShadingType} 2) pattern.
+An axial shading \code{ShadingType} 2 is used here.
 \begin{center}
 \makebox[320pt][l]{
 \special{pdf:obj @SH01 <<
@@ -1623,7 +1598,7 @@ The last example is an advanced use of graphics state manipulation commands for 
 \end{center}
 
 To draw the above image, we first define the source image for the mask.
-It is constructed with a gradient fill (radial shading): 
+The mask image is constructed using radial shading: 
 \begin{lstlisting}
 \special{pdf:obj @SH02 <<
   /ShadingType 3
@@ -1638,12 +1613,12 @@ It is constructed with a gradient fill (radial shading):
   >> 
 >>}
 \end{lstlisting}
-Here, \code{ShadingType} 3 indicates a radial shading.
-The color changes between two circles with radii $20$ and $100$ both centered at $(100, -100)$ as specified
-by \code{Coords}.
-How the color changes is determined by \code{Function} entry of the shading dictionary.
-\code{C0} and \code{C1} declare that color values on the innter and outer circles respectively.
-Exponential interpolation is used to interpolate the colors between them with the exponent specified as $N = 1.6$.
+In this shading dictionary, \code{ShadingType} 3 is used which indicates radial shading.
+The color changes between two circles with radii $20$ and $100$ both centered at $(100, -100)$ as
+specified by the \code{Coords} dictionay entry.
+How the color changes is determined by the \code{Function} entry of this shading dictionary.
+\code{C0} and \code{C1} declare color values on the inner and outer circles respectively.
+Exponential interpolation is used to interpolate colors between them with the exponent specified as $N = 1.6$.
 
 \begin{lstlisting}
 \special{pdf:stream @TPG01 (/SH02 sh) <<
@@ -1660,22 +1635,24 @@ Exponential interpolation is used to interpolate the colors between them with th
   >>
 >>}
 \end{lstlisting}
-Then, it is used as a mask to compose the background (a rectangle filled with gray color) and
+Then, it is used as a mask to compose the background (white) and
 foreground (text generated by \package{lipsum} package) images.
 \begin{lstlisting}
-\special{pdf:bcontent}
-\special{pdf:bxgstate <<
-  /SMask <<
-    /Type /Mask
-    /S /Luminosity
-    /G @TPG01
-  >>
->>}
-\special{pdf:bcolor [0.8 0.4 0.2]}
-\small\lipsum[1]
-\special{pdf:ecolor}
-\special{pdf:exgstate}
-\special{pdf:econtent}
+\parbox[t][200bp][c]{200bp}{
+  \special{pdf:bcontent}
+  \special{pdf:bxgstate <<
+    /SMask <<
+      /Type /Mask
+      /S /Luminosity
+      /G @TPG01
+    >>
+  >>}
+  \special{pdf:bcolor [0.8 0.4 0.2]}
+  \small\lipsum[1]
+  \special{pdf:ecolor}
+  \special{pdf:exgstate}
+  \special{pdf:econtent}
+}
 \end{lstlisting}
 
 \section{Dvipdfmx Extensions}
